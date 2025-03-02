@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/made-in-canada/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/made-in-canada/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/made-in-canada",
+  "projects": {
+    "made-in-canada": {
+      "type": "application",
+      "root": "apps/made-in-canada",
+      "entryFile": "main",
+      "sourceRoot": "apps/made-in-canada/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/made-in-canada/tsconfig.app.json"
+      }
+    },
+    "quickeat": {
+      "type": "application",
+      "root": "apps/quickeat",
+      "entryFile": "main",
+      "sourceRoot": "apps/quickeat/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/quickeat/tsconfig.app.json"
+      }
+    }
+  }
+}

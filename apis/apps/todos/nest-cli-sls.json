@@ -4,6 +4,7 @@
   "sourceRoot": "src",
   "entryFile": "main-sls",
   "compilerOptions": {
+    "webpack": true,
     "deleteOutDir": true,
     "assets": [{"include": "../config/*.yaml", "outDir": "./dist/config"}]
   }

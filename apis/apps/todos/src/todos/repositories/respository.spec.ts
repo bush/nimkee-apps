@@ -1,7 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConsoleLogger, Logger } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { TodoConfig } from "./electrodb/todos-config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TodoPreview } from "../interfaces/todo";
 import { TodosRepository } from "../interfaces/todos-repository";
 import { TodosRepositoryElectorDBModule } from "./electrodb/todos-repository.module";
@@ -15,10 +14,15 @@ const useLogger = false;
 let repository: TodosRepository;
 
 const electrodbTestModule = Test.createTestingModule({
-  imports: [TodosRepositoryElectorDBModule.register({
-    provide: TodosRepository,
-    useClass: ElectroDbTodoRepository
-  })],
+  imports: [
+      TodosRepositoryElectorDBModule.register({
+      provide: TodosRepository,
+      useClass: ElectroDbTodoRepository
+    }),
+    ConfigModule.forRoot({
+      envFilePath: `config/dynamodb/.${process.env.NODE_ENV}.env`,
+    })
+  ],
 })
   .setLogger(useLogger ? new ConsoleLogger() : null)
   .compile();

@@ -9,6 +9,8 @@ import {
 
 import { Entity, Schema } from 'electrodb';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
+
 
 import { CreateTodoDto } from "../../dto/create-todo.dto";
 import { UpdateTodoDto } from "../../dto/update-todo.dto";
@@ -21,7 +23,7 @@ import { InternalServerErrorException } from "@nestjs/common";
 export class ElectroDbTodoRepository implements TodosRepository {
   public todos: Entity<string, string, string, Schema<string, string, string>>;
 
-  constructor(client: DynamoDBClient,
+  constructor(client: DynamoDBDocument,
     @Inject('TABLE_CONFIG') config: {
       tableName: string,
       pkName: string,

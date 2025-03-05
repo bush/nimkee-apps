@@ -3,6 +3,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { ConfigService } from '@nestjs/config';
 import { ElectroDbTodoRepository } from './todos-repository.service';
 import { TodosRepository } from '../../interfaces/todos-repository';
+import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 
 const TodosRepositoryProvider = { provide: TodosRepository, useClass: ElectroDbTodoRepository };
 
@@ -26,17 +27,19 @@ export class TodosRepositoryElectorDBModule {
           inject: [ConfigService]
         },
         {
-          provide: DynamoDBClient,
+          provide: DynamoDBDocument,
           useFactory: (config: ConfigService) => {
             const name = TodosRepositoryElectorDBModule.name;
             Logger.log(`ACCESS_KEY: ${process.env.AWS_ACCESS_KEY_ID}`, name);
             Logger.log(`Dynamodb ENDPOINT: ${config.get<string>('ENDPOINT')}`, name);
             Logger.log(`Dynamodb TODO_TABLE_REGION: ${config.get<string>('TODO_TABLE_REGION')}`, name);
 
-            return new DynamoDBClient({
+            const client = new DynamoDBClient({
               endpoint: config.get<string>('ENDPOINT'),
               region: config.get<string>('TODO_TABLE_REGION'),
-            })
+            });
+
+            return DynamoDBDocument.from(client);
           },
           inject: [ConfigService],
         },

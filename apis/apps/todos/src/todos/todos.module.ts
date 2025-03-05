@@ -5,6 +5,7 @@ import { TodosRepositoryElectorDBModule } from './repositories/electrodb/todos-r
 import { ElectroDbTodoRepository } from './repositories/electrodb/todos-repository.service'
 import { TodosRepository } from './interfaces/todos-repository'
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { ConfigModule } from '@nestjs/config';
 
 
 @Module({
@@ -13,6 +14,9 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
   imports: [TodosRepositoryElectorDBModule.register({
     provide: TodosRepository,
     useClass: ElectroDbTodoRepository
+  }),
+  ConfigModule.forRoot({
+    envFilePath: `config/dynamodb/.${process.env.NODE_ENV}.env`,
   })],
 })
 export class TodosModule implements NestModule {

@@ -10,12 +10,10 @@ import {
 import { Entity, Schema } from 'electrodb';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 
-import { TodoConfig, TodoEntity } from "./todos-config";
 import { CreateTodoDto } from "../../dto/create-todo.dto";
 import { UpdateTodoDto } from "../../dto/update-todo.dto";
 import { Todo, Todos, TodoID, TodoPreview } from "../../interfaces/todo";
 import { TodosRepository } from "../../interfaces/todos-repository";
-import { ConfigService } from '@nestjs/config';
 
 import { InternalServerErrorException } from "@nestjs/common";
 
@@ -29,8 +27,8 @@ export class ElectroDbTodoRepository implements TodosRepository {
       pkName: string,
       skName: string
     }) {
-    console.log(`tableName: ${config.tableName}, pkName: ${config.pkName}, ${typeof(client)}`)
-    this.todos = new Entity<string, string, string, Schema<string, string, string>>({
+
+      this.todos = new Entity<string, string, string, Schema<string, string, string>>({
       model: {
         entity: 'Todo',
         version: '1',

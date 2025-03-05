@@ -1,24 +1,17 @@
-import { DynamicModule, Module, Provider } from '@nestjs/common';
+import { DynamicModule, Logger, Module, Provider } from '@nestjs/common';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-
+import { ConfigService } from '@nestjs/config';
 import { ElectroDbTodoRepository } from './todos-repository.service';
 import { TodosRepository } from '../../interfaces/todos-repository';
 
 const TodosRepositoryProvider = { provide: TodosRepository, useClass: ElectroDbTodoRepository };
 
-@Module({
-  imports: [
-    ConfigModule.forRoot({
-      envFilePath: `config/dynamodb/.${process.env.NODE_ENV}.env`,
-    }),
-  ]
-})
+@Module({})
 export class TodosRepositoryElectorDBModule {
   static register(electrodbRepoProvider: Provider): DynamicModule {
     return {
       module: TodosRepositoryElectorDBModule,
-    
+
       providers: [
         electrodbRepoProvider,
         {
@@ -35,7 +28,10 @@ export class TodosRepositoryElectorDBModule {
         {
           provide: DynamoDBClient,
           useFactory: (config: ConfigService) => {
-            console.log(`ACCESS_KEY: ${process.env.AWS_ACCESS_KEY_ID}`)
+            const name = TodosRepositoryElectorDBModule.name;
+            Logger.log(`ACCESS_KEY: ${process.env.AWS_ACCESS_KEY_ID}`, name);
+            Logger.log(`Dynamodb ENDPOINT: ${config.get<string>('ENDPOINT')}`, name);
+            Logger.log(`Dynamodb TODO_TABLE_REGION: ${config.get<string>('TODO_TABLE_REGION')}`, name);
 
             return new DynamoDBClient({
               endpoint: config.get<string>('ENDPOINT'),

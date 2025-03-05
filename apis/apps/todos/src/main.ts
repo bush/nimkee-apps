@@ -12,7 +12,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   Logger.log(`NODE_ENV: ${process.env.NODE_ENV}`, "Main");
   const port = process.env.PORT ?? 3000
-  Logger.log(`Server started on port: ${port}`);
+  Logger.log(`Server started on port: ${port}`, "Main");
 
   const config = new DocumentBuilder()
     .setTitle('Todo Service API')

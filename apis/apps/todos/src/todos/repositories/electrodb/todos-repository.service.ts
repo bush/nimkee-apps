@@ -1,25 +1,54 @@
 import { v4 as uuidv4 } from "uuid";
 import {
   BadRequestException,
+  Inject,
   Injectable,
   Query,
   UseFilters,
 } from "@nestjs/common";
+
+import { Entity, Schema } from 'electrodb';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 
 import { TodoConfig, TodoEntity } from "./todos-config";
 import { CreateTodoDto } from "../../dto/create-todo.dto";
 import { UpdateTodoDto } from "../../dto/update-todo.dto";
 import { Todo, Todos, TodoID, TodoPreview } from "../../interfaces/todo";
 import { TodosRepository } from "../../interfaces/todos-repository";
+import { ConfigService } from '@nestjs/config';
 
 import { InternalServerErrorException } from "@nestjs/common";
 
 @Injectable()
 export class ElectroDbTodoRepository implements TodosRepository {
-  private todos: TodoEntity;
+  public todos: Entity<string, string, string, Schema<string, string, string>>;
 
-  constructor(config: TodoConfig) {
-    this.todos = config.entity;
+  constructor(client: DynamoDBClient,
+    @Inject('TABLE_CONFIG') config: {
+      tableName: string,
+      pkName: string,
+      skName: string
+    }) {
+    console.log(`tableName: ${config.tableName}, pkName: ${config.pkName}, ${typeof(client)}`)
+    this.todos = new Entity<string, string, string, Schema<string, string, string>>({
+      model: {
+        entity: 'Todo',
+        version: '1',
+        service: 'TodoApp',
+      },
+      attributes: {
+        id: { type: 'string' },
+        title: { type: 'string' },
+        description: { type: 'string' },
+        isCompleted: { type: 'boolean' },
+      },
+      indexes: {
+        primary: {
+          pk: { field: config.pkName, composite: [] },
+          sk: { field: config.skName, composite: ['id'] },
+        },
+      },
+    }, { table: config.tableName, client })
   }
 
   async create(createTodoDto: CreateTodoDto): Promise<TodoID> {
@@ -41,7 +70,7 @@ export class ElectroDbTodoRepository implements TodosRepository {
 
   async findAll(next?: string, limit?: number): Promise<Todos> {
     try {
-
+      
       const result = await this.todos.query.primary({}).go({
         cursor: next,
         attributes: ["id", "title", "isCompleted"],

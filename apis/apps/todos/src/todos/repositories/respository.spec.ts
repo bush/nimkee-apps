@@ -6,8 +6,6 @@ import { TodosRepository } from "../interfaces/todos-repository";
 import { TodosRepositoryElectorDBModule } from "./electrodb/todos-repository.module";
 import { ElectroDbTodoRepository } from "./electrodb/todos-repository.service"
 
-import util from "util";
-
 // Logging on/off
 const useLogger = false;
 
@@ -18,11 +16,9 @@ const electrodbTestModule = Test.createTestingModule({
       TodosRepositoryElectorDBModule.register({
       provide: TodosRepository,
       useClass: ElectroDbTodoRepository
-    }),
-    ConfigModule.forRoot({
-      envFilePath: `config/dynamodb/.${process.env.NODE_ENV}.env`,
     })
-  ],
+   
+  ]
 })
   .setLogger(useLogger ? new ConsoleLogger() : null)
   .compile();

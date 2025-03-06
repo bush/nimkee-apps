@@ -1,18 +1,17 @@
 import { DynamicModule, Logger, Module, Provider } from '@nestjs/common';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { ConfigService } from '@nestjs/config';
-import { ElectroDbTodoRepository } from './todos-repository.service';
-import { TodosRepository } from '../../interfaces/todos-repository';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 
-const TodosRepositoryProvider = { provide: TodosRepository, useClass: ElectroDbTodoRepository };
-
-@Module({})
+@Module({
+  imports: [ConfigModule.forRoot({
+    envFilePath: `config/dynamodb/.${process.env.NODE_ENV}.env`
+  })]
+})
 export class TodosRepositoryElectorDBModule {
   static register(electrodbRepoProvider: Provider): DynamicModule {
     return {
       module: TodosRepositoryElectorDBModule,
-
       providers: [
         electrodbRepoProvider,
         {
@@ -44,7 +43,7 @@ export class TodosRepositoryElectorDBModule {
           inject: [ConfigService],
         },
       ],
-      exports: [TodosRepositoryProvider]
+      exports: [electrodbRepoProvider]
     }
   }
 }

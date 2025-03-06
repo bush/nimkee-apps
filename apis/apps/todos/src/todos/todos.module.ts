@@ -14,9 +14,6 @@ import { ConfigModule } from '@nestjs/config';
   imports: [TodosRepositoryElectorDBModule.register({
     provide: TodosRepository,
     useClass: ElectroDbTodoRepository
-  }),
-  ConfigModule.forRoot({
-    envFilePath: `config/dynamodb/.${process.env.NODE_ENV}.env`,
   })],
 })
 export class TodosModule implements NestModule {

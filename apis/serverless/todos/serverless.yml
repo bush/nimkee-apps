@@ -11,8 +11,10 @@ custom:
 
 package:
   patterns:
-    - '../../dist/apps/todos/**'
-    - '../../apps/todos/.development.env'
+    - '!apps/**'
+    - 'dist/apps/todos/**'
+    - 'apps/todos/.development.env'
+    - 'apps/todos/.build.env'
 
 provider:
   name: aws

@@ -10,7 +10,10 @@ import { join } from 'path';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: join('apps/todos/',`.${process.env.NODE_ENV || 'development'}.env`)
+      envFilePath: [
+        join('apps/todos/',`.${process.env.NODE_ENV || 'development'}.env`),
+        'apps/todos/.build.env'
+      ]
     }),
     AuthModule,
     TodosModule,

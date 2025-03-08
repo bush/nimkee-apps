@@ -8,7 +8,7 @@
 	},
 	"item": [
 		{
-			"name": "Login local",
+			"name": "Login",
 			"event": [
 				{
 					"listen": "test",
@@ -50,7 +50,7 @@
 			"response": []
 		},
 		{
-			"name": "Auth0 password login",
+			"name": "Login username/password",
 			"event": [
 				{
 					"listen": "test",
@@ -71,7 +71,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"grant_type\": \"password\",\n    \"username\": \"dbush\",\n    \"password\": \"a:tmwtGR10\",\n    \"client_id\": \"cZa57o88NuybUv8GtereUhSPKN9eEKjr\",\n    \"client_secret\": \"FtVwUtwI9vGFri1NtgMSWNeBxmzeaZQfryE1PnXJcvzHjLPI8y4LmST6_GbT_tfJ\",\n    \"audience\": \"http://localhost:8080/\",\n    \"scope\": \"openid profile email\"\n}",
+					"raw": "{\n    \"grant_type\":    \"password\",\n    \"username\":      \"{{username}}\",\n    \"password\":      \"{{password}}\",\n    \"client_id\":     \"cZa57o88NuybUv8GtereUhSPKN9eEKjr\",\n    \"client_secret\": \"FtVwUtwI9vGFri1NtgMSWNeBxmzeaZQfryE1PnXJcvzHjLPI8y4LmST6_GbT_tfJ\",\n    \"audience\":      \"http://localhost:8080/\",\n    \"scope\":         \"openid profile email\"\n  }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -79,13 +79,9 @@
 					}
 				},
 				"url": {
-					"raw": "https://dev-g9rhgyjn.us.auth0.com/oauth/token",
-					"protocol": "https",
+					"raw": "{{auth0-domain}}/oauth/token",
 					"host": [
-						"dev-g9rhgyjn",
-						"us",
-						"auth0",
-						"com"
+						"{{auth0-domain}}"
 					],
 					"path": [
 						"oauth",
@@ -96,15 +92,54 @@
 			"response": []
 		},
 		{
-			"name": "Auth0 test",
+			"name": "Revoke access_token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"client_id\":     \"cZa57o88NuybUv8GtereUhSPKN9eEKjr\",\n  \"client_secret\": \"FtVwUtwI9vGFri1NtgMSWNeBxmzeaZQfryE1PnXJcvzHjLPI8y4LmST6_GbT_tfJ\",\n  \"token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjlzQXVaaXlQOVU3OTVXWDd5R0xqUSJ9.eyJpc3MiOiJodHRwczovL2Rldi1nOXJoZ3lqbi51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjdiYjlkMzRlMjA1YWM4MDQ5OWNhZjAzIiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC8iLCJodHRwczovL2Rldi1nOXJoZ3lqbi51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzQwOTI4MTExLCJleHAiOjE3NDEwMTQ1MTEsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJhenAiOiJjWmE1N284OE51eWJVdjhHdGVyZVVoU1BLTjllRUtqciIsInBlcm1pc3Npb25zIjpbImNyZWF0ZTp0b2RvcyIsImRlbGV0ZTp0b2RvcyIsInJlYWQ6dG9kb3MiLCJ1cGRhdGU6dG9kb3MiXX0.QyLpiK6WThBMlPegbMvT8M7FIHqjHxjNX3Fv06_ncxTVYOzlIl8PrNyri7xoieXat2PK0yBxElCpP_JFcNLDcn74P3lKbU07yc5bp7peW567yK9zb3wvY7Y7kxrqvElXmrsPeZVZWhjdoeoKOAToekwYrLsdVf_h3LBatDaXY0MrcrH_lIKYByPhEd27gJGW0IxJQYTbcATlKETgdrObo7DXcjQdTqu9HkKmWkBChi4TH10wOKVU8WcLDQuKcoI3ehAvxH8cgOeNRQBBqmo1d1WYvAOttaTZ6svDl-qArRytMl1bBLqNlTFR1EL71BFNgJn6tno_Oe4rvDi57WDekQ\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{auth0-domain}}/oauth/revoke",
+					"host": [
+						"{{auth0-domain}}"
+					],
+					"path": [
+						"oauth",
+						"revoke"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get todos",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
 							"pm.collectionVariables.set(",
-							"    \"access_token\", ",
-							"    pm.response.json().access_token",
+							"    \"next\", ",
+							"    pm.response.json().next",
 							");"
 						],
 						"type": "text/javascript",
@@ -112,13 +147,152 @@
 					}
 				}
 			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"auth": {
 					"type": "oauth2",
 					"oauth2": [
+						{
+							"key": "useBrowser",
+							"value": false,
+							"type": "boolean"
+						},
+						{
+							"key": "authRequestParams",
+							"value": [
+								{
+									"key": "audience",
+									"value": "http://localhost:8080/",
+									"enabled": true,
+									"send_as": "request_url"
+								}
+							],
+							"type": "any"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "refreshRequestParams",
+							"value": [],
+							"type": "any"
+						},
+						{
+							"key": "tokenRequestParams",
+							"value": [
+								{
+									"key": "client_id",
+									"value": "cZa57o88NuybUv8GtereUhSPKN9eEKjr",
+									"enabled": true,
+									"send_as": "request_body"
+								}
+							],
+							"type": "any"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code_with_pkce",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://oauth.pstmn.io/v1/callback",
+							"type": "string"
+						},
+						{
+							"key": "refreshTokenUrl",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "openid profile email",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "cZa57o88NuybUv8GtereUhSPKN9eEKjr",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://dev-g9rhgyjn.us.auth0.com/oauth/token",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://dev-g9rhgyjn.us.auth0.com/authorize",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "access_token",
+							"type": "string"
+						},
+						{
+							"key": "challengeAlgorithm",
+							"value": "S256",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/todos?limit=2",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"todos"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get todo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(",
+							"    \"next\", ",
+							"    pm.response.json().next",
+							");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "tokenType",
+							"value": "",
+							"type": "string"
+						},
 						{
 							"key": "refreshTokenUrl",
 							"value": "",
@@ -224,106 +398,6 @@
 				},
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"grant_type\": \"password\",\n    \"username\": \"dbush\",\n    \"password\": \"a:tmwtGR10\",\n    \"client_id\": \"cZa57o88NuybUv8GtereUhSPKN9eEKjr\",\n    \"client_secret\": \"FtVwUtwI9vGFri1NtgMSWNeBxmzeaZQfryE1PnXJcvzHjLPI8y4LmST6_GbT_tfJ\",\n    \"audience\": \"http://localhost:8080/\",\n    \"scope\": \"openid profile email\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{host}}/todos?limit=2",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"todos"
-					],
-					"query": [
-						{
-							"key": "limit",
-							"value": "2"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get todos",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.collectionVariables.set(",
-							"    \"next\", ",
-							"    pm.response.json().next",
-							");"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{access_token}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{host}}/todos/40ef65ca-b51f-48c8-a37d-e34f7aad1b60",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"todos",
-						"40ef65ca-b51f-48c8-a37d-e34f7aad1b60"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get todo",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.collectionVariables.set(",
-							"    \"next\", ",
-							"    pm.response.json().next",
-							");"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{access_token}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
 				"url": {
 					"raw": "{{host}}/todos/40ef65ca-b51f-48c8-a37d-e34f7aad1b60",
 					"host": [
@@ -356,11 +430,112 @@
 			],
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
+					"type": "oauth2",
+					"oauth2": [
 						{
-							"key": "token",
-							"value": "{{access_token}}",
+							"key": "tokenType",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "refreshTokenUrl",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "refreshRequestParams",
+							"value": [
+								{
+									"key": "client_id",
+									"value": "cZa57o88NuybUv8GtereUhSPKN9eEKjr",
+									"enabled": true,
+									"send_as": "request_body"
+								}
+							],
+							"type": "any"
+						},
+						{
+							"key": "useBrowser",
+							"value": false,
+							"type": "boolean"
+						},
+						{
+							"key": "authRequestParams",
+							"value": [
+								{
+									"key": "audience",
+									"value": "http://localhost:8080/",
+									"enabled": true,
+									"send_as": "request_url"
+								}
+							],
+							"type": "any"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "tokenRequestParams",
+							"value": [
+								{
+									"key": "client_id",
+									"value": "cZa57o88NuybUv8GtereUhSPKN9eEKjr",
+									"enabled": true,
+									"send_as": "request_body"
+								}
+							],
+							"type": "any"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code_with_pkce",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://oauth.pstmn.io/v1/callback",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "openid profile email",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "cZa57o88NuybUv8GtereUhSPKN9eEKjr",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://dev-g9rhgyjn.us.auth0.com/oauth/token",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://dev-g9rhgyjn.us.auth0.com/authorize",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "access_token",
+							"type": "string"
+						},
+						{
+							"key": "challengeAlgorithm",
+							"value": "S256",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
 							"type": "string"
 						}
 					]
@@ -384,11 +559,112 @@
 			"name": "Update todo",
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
+					"type": "oauth2",
+					"oauth2": [
 						{
-							"key": "token",
-							"value": "{{access_token}}",
+							"key": "tokenType",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "refreshTokenUrl",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "refreshRequestParams",
+							"value": [
+								{
+									"key": "client_id",
+									"value": "cZa57o88NuybUv8GtereUhSPKN9eEKjr",
+									"enabled": true,
+									"send_as": "request_body"
+								}
+							],
+							"type": "any"
+						},
+						{
+							"key": "useBrowser",
+							"value": false,
+							"type": "boolean"
+						},
+						{
+							"key": "authRequestParams",
+							"value": [
+								{
+									"key": "audience",
+									"value": "http://localhost:8080/",
+									"enabled": true,
+									"send_as": "request_url"
+								}
+							],
+							"type": "any"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "tokenRequestParams",
+							"value": [
+								{
+									"key": "client_id",
+									"value": "cZa57o88NuybUv8GtereUhSPKN9eEKjr",
+									"enabled": true,
+									"send_as": "request_body"
+								}
+							],
+							"type": "any"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code_with_pkce",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://oauth.pstmn.io/v1/callback",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "openid profile email",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "cZa57o88NuybUv8GtereUhSPKN9eEKjr",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://dev-g9rhgyjn.us.auth0.com/oauth/token",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://dev-g9rhgyjn.us.auth0.com/authorize",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "access_token",
+							"type": "string"
+						},
+						{
+							"key": "challengeAlgorithm",
+							"value": "S256",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
 							"type": "string"
 						}
 					]
@@ -405,13 +681,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/todos/40ef65ca-b51f-48c8-a37d-e34f7aad1b60",
+					"raw": "{{host}}/todos/0981864b-0dfb-4362-ac1c-3ffc7c390bc7",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"todos",
-						"40ef65ca-b51f-48c8-a37d-e34f7aad1b60"
+						"0981864b-0dfb-4362-ac1c-3ffc7c390bc7"
 					]
 				}
 			},
@@ -421,11 +697,112 @@
 			"name": "Create todo",
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
+					"type": "oauth2",
+					"oauth2": [
 						{
-							"key": "token",
-							"value": "{{access_token}}",
+							"key": "tokenType",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "refreshTokenUrl",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "refreshRequestParams",
+							"value": [
+								{
+									"key": "client_id",
+									"value": "cZa57o88NuybUv8GtereUhSPKN9eEKjr",
+									"enabled": true,
+									"send_as": "request_body"
+								}
+							],
+							"type": "any"
+						},
+						{
+							"key": "useBrowser",
+							"value": false,
+							"type": "boolean"
+						},
+						{
+							"key": "authRequestParams",
+							"value": [
+								{
+									"key": "audience",
+									"value": "http://localhost:8080/",
+									"enabled": true,
+									"send_as": "request_url"
+								}
+							],
+							"type": "any"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "tokenRequestParams",
+							"value": [
+								{
+									"key": "client_id",
+									"value": "cZa57o88NuybUv8GtereUhSPKN9eEKjr",
+									"enabled": true,
+									"send_as": "request_body"
+								}
+							],
+							"type": "any"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code_with_pkce",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://oauth.pstmn.io/v1/callback",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "openid profile email",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "cZa57o88NuybUv8GtereUhSPKN9eEKjr",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://dev-g9rhgyjn.us.auth0.com/oauth/token",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://dev-g9rhgyjn.us.auth0.com/authorize",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "access_token",
+							"type": "string"
+						},
+						{
+							"key": "challengeAlgorithm",
+							"value": "S256",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
 							"type": "string"
 						}
 					]
@@ -457,11 +834,112 @@
 			"name": "Delete todo",
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
+					"type": "oauth2",
+					"oauth2": [
 						{
-							"key": "token",
-							"value": "{{access_token}}",
+							"key": "tokenType",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "refreshTokenUrl",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "refreshRequestParams",
+							"value": [
+								{
+									"key": "client_id",
+									"value": "cZa57o88NuybUv8GtereUhSPKN9eEKjr",
+									"enabled": true,
+									"send_as": "request_body"
+								}
+							],
+							"type": "any"
+						},
+						{
+							"key": "useBrowser",
+							"value": false,
+							"type": "boolean"
+						},
+						{
+							"key": "authRequestParams",
+							"value": [
+								{
+									"key": "audience",
+									"value": "http://localhost:8080/",
+									"enabled": true,
+									"send_as": "request_url"
+								}
+							],
+							"type": "any"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "tokenRequestParams",
+							"value": [
+								{
+									"key": "client_id",
+									"value": "cZa57o88NuybUv8GtereUhSPKN9eEKjr",
+									"enabled": true,
+									"send_as": "request_body"
+								}
+							],
+							"type": "any"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code_with_pkce",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://oauth.pstmn.io/v1/callback",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "openid profile email",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "cZa57o88NuybUv8GtereUhSPKN9eEKjr",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://dev-g9rhgyjn.us.auth0.com/oauth/token",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://dev-g9rhgyjn.us.auth0.com/authorize",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "access_token",
+							"type": "string"
+						},
+						{
+							"key": "challengeAlgorithm",
+							"value": "S256",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
 							"type": "string"
 						}
 					]
@@ -469,13 +947,13 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/todos/{{id}}",
+					"raw": "{{host}}/todos/2a2fb0e9-1263-4197-83bc-aea50251a83f",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"todos",
-						"{{id}}"
+						"2a2fb0e9-1263-4197-83bc-aea50251a83f"
 					]
 				}
 			},
@@ -504,30 +982,44 @@
 	],
 	"variable": [
 		{
-			"key": "id",
-			"value": "1"
-		},
-		{
-			"key": "base_url",
-			"value": "https://postman-rest-api-learner.glitch.me/"
-		},
-		{
-			"key": "todo_server",
-			"value": "",
+			"key": "host",
+			"value": "http://localhost:3000",
 			"type": "default"
 		},
 		{
 			"key": "host",
-			"value": "http://localhost:3000",
-			"type": "default"
+			"value": "https://3tvwxvvfdk.execute-api.us-east-1.amazonaws.com/dev/",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "host",
+			"value": "http://localhost:3000/dev",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "next",
+			"value": ""
+		},
+		{
+			"key": "auth0-domain",
+			"value": "https://dev-g9rhgyjn.us.auth0.com",
+			"type": "string"
 		},
 		{
 			"key": "access_token",
 			"value": ""
 		},
 		{
-			"key": "next",
-			"value": ""
+			"key": "username",
+			"value": "testuser1",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "a:tmwtGR10",
+			"type": "string"
 		}
 	]
 }

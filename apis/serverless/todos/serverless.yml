@@ -1,0 +1,54 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: bush75
+service: nestjs-serverless-example
+frameworkVersion: "4"
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  profile:
+    dev: default
+    prod: default
+    test: default
+
+package:
+  patterns:
+    - '../../dist/apps/todos/**'
+    - '../../apps/todos/.development.env'
+
+provider:
+  name: aws
+  environment:
+    NODE_ENV: development
+  stage: dev
+  region: us-east-1
+  profile: ${self:custom.profile.${self:custom.stage}}
+  runtime: nodejs20.x
+  iam:
+    role:
+      statements:
+        - ${file(./table-permissions.yml)}
+
+functions:
+  todos:
+    handler: dist/apps/todos/main-sls.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
+  #todos-create:
+  #  handler: dist/main-sls.handler
+  #  events:
+  #    - http:
+  #        path: todos
+  #        method: post
+   
+  #todos-get:
+  #  handler: dist/main-sls.handler
+  #  events:
+  #    - http:
+  #        path: todos
+  #        method: get
+plugins:
+  - serverless-offline

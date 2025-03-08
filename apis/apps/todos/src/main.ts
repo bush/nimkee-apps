@@ -10,6 +10,7 @@ async function bootstrap() {
     logger: ['verbose'],
   });
   app.useGlobalPipes(new ValidationPipe());
+  Logger.log(`Root Directory: ${process.cwd()}`);
   Logger.log(`NODE_ENV: ${process.env.NODE_ENV}`, "Main");
   const port = process.env.PORT ?? 3000
   Logger.log(`Server started on port: ${port}`, "Main");

@@ -6,8 +6,6 @@ import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 @Module({})
 export class ElectroDBModule {
   static register(electrodbRepoProvider: Provider): DynamicModule {
-    console.log('here!!!!');
-    console.log(process.cwd())
     return {
       module: ElectroDBModule,
       providers: [

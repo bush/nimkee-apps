@@ -1,26 +1,29 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ConsoleLogger, Logger } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConsoleLogger, Logger, LogLevel } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { TodoPreview } from "../interfaces/todo";
 import { TodosRepository } from "../interfaces/todos-repository";
-import { TodosRepositoryElectorDBModule } from "./electrodb/todos-repository.module";
+import { ElectroDBModule } from '@app/electrodb';
 import { ElectroDbTodoRepository } from "./electrodb/todos-repository.service"
 
 // Logging on/off
 const useLogger = false;
+const levels: LogLevel[]  = ['log', 'error', 'warn'];
+//const levels: LogLevel[]  = [];
+const defaultTableName = 'TodosTable';
 
 let repository: TodosRepository;
 
+
 const electrodbTestModule = Test.createTestingModule({
   imports: [
-      TodosRepositoryElectorDBModule.register({
+      ElectroDBModule.register({
       provide: TodosRepository,
       useClass: ElectroDbTodoRepository
     })
    
   ]
-})
-  .setLogger(useLogger ? new ConsoleLogger() : null)
+}).setLogger(new ConsoleLogger('Repo Logger', { logLevels: levels }))
   .compile();
 
 const fixtures = [
@@ -31,13 +34,15 @@ const fixtures = [
     all: (testModule: TestingModule) => {
       const config = testModule.get<ConfigService>(ConfigService);
       const todoRepo = testModule.get<ElectroDbTodoRepository>(TodosRepository);
-      todoRepo.todos.setTableName(config.get("TODO_TABLE_TABLENAME"));
+      const tableName = config.get("TODO_TABLE_TABLENAME") || defaultTableName
+      todoRepo.todos.setTableName(tableName);
     },
 
     each: (testModule: TestingModule) => {
       const config = testModule.get<ConfigService>(ConfigService);
       const todoRepo = testModule.get<ElectroDbTodoRepository>(TodosRepository);
-      todoRepo.todos.setTableName(config.get("TODO_TABLE_TABLENAME"));
+      const tableName = config.get("TODO_TABLE_TABLENAME") || defaultTableName
+      todoRepo.todos.setTableName(tableName);
     },
 
     ["should get all todos"]: (testModule: TestingModule) => {
@@ -115,7 +120,7 @@ describe.each(fixtures)("RepositoryService", (fixture) => {
     }
 
     let todos: TodoPreview[] = [];
-    let next = null;
+    let next:string | undefined = undefined;
     let pages = 1;
 
     // Paginate through results
@@ -125,9 +130,11 @@ describe.each(fixtures)("RepositoryService", (fixture) => {
       // Accumulate todos and move to the next page
       todos.push(...res.todos);
 
-      Logger.log(`Page ${pages}: Fetched ${res.todos.length} todos`, "RepositoryService");
+      Logger.log(`Page ${pages}: Fetched ${res.todos.length} todos`,
+        "RepositoryService");
       pages++;
-      next = res.next;
+      next = res.next ? res.next : undefined;
+      
     } while (next !== null);
 
     // Sort todos by the numerical value of the test number in the title

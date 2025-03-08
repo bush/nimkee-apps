@@ -38,6 +38,7 @@ export class TodosController implements ITodosController {
       return this.todosService.create(createTodoDto);
     } catch(error) {
       Logger.log(error)
+      throw error
     }
   }
 

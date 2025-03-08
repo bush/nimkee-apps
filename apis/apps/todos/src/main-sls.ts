@@ -11,6 +11,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 let server: Handler;
 async function bootstrap(): Promise<Handler> {
+  Logger.log(`NODE_ENV: ${process.env.NODE_ENV}`, "Main");
+
   const app = await NestFactory.create(AppModule, {
     logger: ['debug'],
   });
@@ -35,7 +37,7 @@ export const handler: Handler = async (
   context: Context,
   callback: Callback,
 ) => {
-  Logger.log(`Application Starting: ${process.env.NODE_ENV}`, 'Bootstrap');
+  Logger.log(`Application Serverless Starting: ${process.env.NODE_ENV}`, 'Bootstrap');
   server = server ?? (await bootstrap());
   return server(event,  context, callback);
 };

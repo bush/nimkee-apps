@@ -3,15 +3,13 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 
-@Module({
-  imports: [ConfigModule.forRoot({
-    envFilePath: `config/dynamodb/.${process.env.NODE_ENV}.env`
-  })]
-})
-export class TodosRepositoryElectorDBModule {
+@Module({})
+export class ElectroDBModule {
   static register(electrodbRepoProvider: Provider): DynamicModule {
+    console.log('here!!!!');
+    console.log(process.cwd())
     return {
-      module: TodosRepositoryElectorDBModule,
+      module: ElectroDBModule,
       providers: [
         electrodbRepoProvider,
         {
@@ -28,7 +26,7 @@ export class TodosRepositoryElectorDBModule {
         {
           provide: DynamoDBDocument,
           useFactory: (config: ConfigService) => {
-            const name = TodosRepositoryElectorDBModule.name;
+            const name = ElectroDBModule.name;
             Logger.log(`ACCESS_KEY: ${process.env.AWS_ACCESS_KEY_ID}`, name);
             Logger.log(`Dynamodb ENDPOINT: ${config.get<string>('ENDPOINT')}`, name);
             Logger.log(`Dynamodb TODO_TABLE_REGION: ${config.get<string>('TODO_TABLE_REGION')}`, name);

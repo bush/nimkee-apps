@@ -21,10 +21,6 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
-  "dependencies": {
-  },
-  "devDependencies": {
-  },
   "jest": {
     "moduleFileExtensions": [
       "js",
@@ -40,6 +36,13 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/apps/",
+      "../../libs/"
+    ],
+    "moduleNameMapper": {
+      "^@app/electrodb(|/.*)$": "../../libs/electrodb/src/$1"
+    }
   }
 }

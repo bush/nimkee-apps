@@ -6,6 +6,6 @@
   "compilerOptions": {
     "webpack": true,
     "deleteOutDir": true,
-    "assets": [{"include": "../config/*.yaml", "outDir": "./dist/config"}]
+    "assets": [{"include": "../config/**", "outDir": "./dist/config"}]
   }
 }

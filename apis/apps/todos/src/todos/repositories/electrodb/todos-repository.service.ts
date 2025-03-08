@@ -93,13 +93,6 @@ export class ElectroDbTodoRepository implements TodosRepository {
 
   async findOne(id: string): Promise<Todo> {
     const result = await this.todos.get({ id }).go();
-    if (!result.data) {
-      return null;
-    }
-
-    if (!result.data) {
-      return null;
-    }
     return result.data as Todo;
   }
 

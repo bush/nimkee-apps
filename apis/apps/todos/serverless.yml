@@ -9,7 +9,8 @@ custom:
     prod: default
     test: default
 
- 
+package:
+  artifact: dist.zip
 
 provider:
   name: aws
@@ -42,7 +43,7 @@ functions:
   #        method: post
    
   #todos-get:
-  #  handler: dist/main-sls.handler
+  #  handler: src/main-sls.handler
   #  events:
   #    - http:
   #        path: todos

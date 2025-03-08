@@ -13,7 +13,6 @@ async function bootstrap() {
   Logger.log(`NODE_ENV: ${process.env.NODE_ENV}`, "Main");
   const port = process.env.PORT ?? 3000
   Logger.log(`Server started on port: ${port}`, "Main");
-
   const config = new DocumentBuilder()
     .setTitle('Todo Service API')
     .setDescription('The cats API description')

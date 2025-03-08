@@ -1,17 +1,15 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { TodosService } from './todos.service';
 import { TodosController } from './todos.controller';
-import { TodosRepositoryElectorDBModule } from './repositories/electrodb/todos-repository.module';
 import { ElectroDbTodoRepository } from './repositories/electrodb/todos-repository.service'
 import { TodosRepository } from './interfaces/todos-repository'
 import { LoggerMiddleware } from './middleware/logger.middleware';
-import { ConfigModule } from '@nestjs/config';
-
+import { ElectroDBModule } from '@app/electrodb';
 
 @Module({
   controllers: [TodosController],
   providers: [TodosService],
-  imports: [TodosRepositoryElectorDBModule.register({
+  imports: [ElectroDBModule.register({
     provide: TodosRepository,
     useClass: ElectroDbTodoRepository
   })],

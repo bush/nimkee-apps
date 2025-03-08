@@ -1,11 +1,3 @@
-/*
-import { ValidationPipe, Logger } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import serverlessExpress from '@codegenie/serverless-express';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-*/
-
 import { Callback, Context, Handler } from 'aws-lambda';
 import { INestApplication, Logger } from '@nestjs/common';
 import serverlessExpress from '@codegenie/serverless-express';
@@ -16,28 +8,6 @@ import { nestInit } from "./nest-init";
 // change the entryFile property in nest-cli.json to "main-sls"
 
 let server: Handler;
-/*
-async function bootstrap(): Promise<Handler> {
-  Logger.log(`NODE_ENV: ${process.env.NODE_ENV}`, "Main");
-
-  const app = await NestFactory.create(AppModule, {
-    logger: ['debug'],
-  });
-
-  const config = new DocumentBuilder()
-    .setTitle('Todo Service API')
-    .setDescription('The cats API description')
-    .setVersion('1.0')
-    .addTag('cats')
-    .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
-
-  app.useGlobalPipes(new ValidationPipe());
-  await app.init();
-  const expressApp = app.getHttpAdapter().getInstance();
-  return serverlessExpress({ app: expressApp });
-}*/
 
 async function bootstrap() {
   const app = await nestInit();

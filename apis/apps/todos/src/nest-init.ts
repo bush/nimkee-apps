@@ -4,11 +4,7 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 export async function nestInit() {
-
-  // Show off the basic environment configuration
-  process.env.NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
-  process.env.PREMISE = process.env.PREMISE ? process.env.PREMISE : 'local';
-  
+ 
   Logger.log(`📋 ENVIRONMENT: ${process.env.NODE_ENV}:${process.env.PREMISE}`, "Nest Init");
   Logger.log(`🏗️ BUILD ID: ${process.env.BUILD_ID}`, "Nest Init")
   // Init

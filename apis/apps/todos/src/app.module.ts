@@ -12,7 +12,7 @@ import { join } from 'path';
       isGlobal: true,
       envFilePath: [
         join('apps/todos/',
-          `.env.${process.env.NODE_ENV}.${process.env.PREMISE}`),
+          `.env.${process.env.NODE_ENV}.${process.env.PREMISE || 'local'}`),
         'apps/todos/.env.build.local'
       ]
     }),

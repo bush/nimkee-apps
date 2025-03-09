@@ -1,5 +1,4 @@
 import { Callback, Context, Handler } from 'aws-lambda';
-import { INestApplication, Logger } from '@nestjs/common';
 import serverlessExpress from '@codegenie/serverless-express';
 
 import { nestInit } from "./nest-init";
@@ -21,8 +20,6 @@ export const handler: Handler = async (
   context: Context,
   callback: Callback,
 ) => {
-  Logger.log(`Application Starting: ${process.env.NODE_ENV}`, 'Bootstrap');
-  
   server = server ?? (await bootstrap());
   return server(event,  context, callback);
 };

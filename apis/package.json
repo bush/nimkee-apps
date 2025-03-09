@@ -21,7 +21,7 @@
 
     
     "update-build": "echo \"BUILD_ID=$(date +%s)\" > ",
-    "todos:start:dev": "npm run start:dev todos",
+    "todos:start:dev": "NODE_ENV=development npm run start:dev todos",
     "todos-sls:build": "npm run update-build apps/todos/.build.env && nest build todos-sls"
 
   },

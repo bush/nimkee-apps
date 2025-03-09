@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -11,8 +11,9 @@ import { join } from 'path';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [
-        join('apps/todos/',`.${process.env.NODE_ENV || 'development'}.env`),
-        'apps/todos/.build.env'
+        join('apps/todos/',
+          `.env.${process.env.NODE_ENV}.${process.env.PREMISE}`),
+        'apps/todos/.env.build.local'
       ]
     }),
     AuthModule,

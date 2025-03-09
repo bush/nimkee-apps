@@ -13,13 +13,14 @@ package:
   patterns:
     - '!apps/**'
     - 'dist/apps/todos/**'
-    - 'apps/todos/.development.env'
-    - 'apps/todos/.build.env'
+    - 'apps/todos/.env.development.local'
+    - 'apps/todos/.env.build.local'
 
 provider:
   name: aws
   environment:
     NODE_ENV: development
+    PREMISE: local
   stage: dev
   region: us-east-1
   profile: ${self:custom.profile.${self:custom.stage}}

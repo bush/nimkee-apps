@@ -21,8 +21,8 @@
 
     
     "update-build": "echo \"BUILD_ID=$(date +%s)\" > ",
-    "todos:start:dev": "NODE_ENV=development npm run start:dev todos",
-    "todos-sls:build": "npm run update-build apps/todos/.build.env && nest build todos-sls"
+    "todos:start:dev": "NODE_ENV=development PREMISE=local npm run start:dev todos",
+    "todos-sls:build": "npm run update-build apps/todos/.env.build.local && nest build todos-sls && cp apps/todos/.env.build.local serverless/todos/apps/todos"
 
   },
   "dependencies": {

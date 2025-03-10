@@ -22,7 +22,7 @@ provider:
   name: aws
   environment:
     NODE_ENV: development
-    PREMISE: aws-lambda 
+    DB_LOCAL: ${param:dblocal,false}
   stage: dev
   region: us-east-1
   profile: ${self:custom.profile.${self:custom.stage}}

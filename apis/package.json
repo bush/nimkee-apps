@@ -18,15 +18,13 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/made-in-canada/test/jest-e2e.json",
-
-    
     "update-build": "echo \"BUILD_ID=$(date +%s)\" > ",
     "todos:start:dev": "NODE_ENV=development PREMISE=local npm run start:dev todos",
     "todos-sls:build": "npm run update-build apps/todos/.env.build.local && nest build todos-sls && cp apps/todos/.env.build.local serverless/todos/apps/todos"
-
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.712.0",
+    "@aws-sdk/credential-providers": "^3.758.0",
     "@codegenie/serverless-express": "^4.16.0",
     "@nestjs/common": "^11.0.11",
     "@nestjs/config": "^4.0.1",

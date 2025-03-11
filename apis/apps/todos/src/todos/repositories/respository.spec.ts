@@ -20,7 +20,8 @@ let repository: TodosRepository;
 
 
 const electrodbTestModule = Test.createTestingModule({
-  imports: [TodosElectroDBRepoModule.register(localDocClientProvider), ConfigModule.forRoot({
+  imports: [TodosElectroDBRepoModule.register(localDocClientProvider),
+    ConfigModule.forRoot({
     isGlobal: true,
     envFilePath: [
       join('apps/todos/',
@@ -139,9 +140,9 @@ describe.each(fixtures)("RepositoryService", (fixture) => {
       Logger.log(`Page ${pages}: Fetched ${res.todos.length} todos`,
         "RepositoryService");
       pages++;
-      next = res.next ? res.next : undefined;
+      next = 'next' in res ? res.next : undefined;
 
-    } while (next !== null);
+    } while (next !== undefined);
 
     // Sort todos by the numerical value of the test number in the title
     todos.sort((a, b) => {

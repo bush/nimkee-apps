@@ -70,7 +70,7 @@ describe('AppController (e2e)', () => {
       .set('Authorization', `Bearer ${jwt}`)
       .send(todo)
       .expect(201);
-    const { id } = res.body;
+    id = res.body.id;
     expect(id).toContain('-');
   });
 

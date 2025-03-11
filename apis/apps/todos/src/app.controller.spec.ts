@@ -17,7 +17,6 @@ describe('AppController', () => {
             isGlobal: true,
           }),
           AuthModule,
-          TodosModule,
         ],
       controllers: [AppController],
       providers: [AppService],

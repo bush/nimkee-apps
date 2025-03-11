@@ -77,8 +77,8 @@ export class ElectroDbTodoRepository implements TodosRepository {
         count: limit || 10,
       });
 
-      const todos: Todos = { todos: result.data as TodoPreview[], next: null };
-      todos.next = result.cursor;
+      const todos: Todos = { todos: result.data as TodoPreview[] };
+      if(result.cursor) { todos.next = result.cursor; }
       return todos;
 
     } catch (error) {

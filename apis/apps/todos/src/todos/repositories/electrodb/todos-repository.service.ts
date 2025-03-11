@@ -1,3 +1,7 @@
+// Nestjs imports
+import { InternalServerErrorException } from "@nestjs/common";
+
+// External imports
 import { v4 as uuidv4 } from "uuid";
 import {
   BadRequestException,
@@ -6,18 +10,14 @@ import {
   Query,
   UseFilters,
 } from "@nestjs/common";
-
 import { Entity, Schema } from 'electrodb';
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 
-
+// Local imports
 import { CreateTodoDto } from "../../dto/create-todo.dto";
 import { UpdateTodoDto } from "../../dto/update-todo.dto";
 import { Todo, Todos, TodoID, TodoPreview } from "../../interfaces/todo";
 import { TodosRepository } from "../../interfaces/todos-repository";
-
-import { InternalServerErrorException } from "@nestjs/common";
 
 @Injectable()
 export class ElectroDbTodoRepository implements TodosRepository {

@@ -1,10 +1,14 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConsoleLogger, Logger, LogLevel } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TodoPreview } from "../interfaces/todo";
 import { TodosRepository } from "../interfaces/todos-repository";
-import { ElectroDBModule } from '@app/electrodb';
-import { ElectroDbTodoRepository } from "./electrodb/todos-repository.service"
+
+import { ElectroDbTodoRepository } from './electrodb/todos-repository.service' 
+import { TodosElectroDBRepoModule } from './electrodb/todos-repostitory.module';
+
+import { localDocClientProvider, prodDocClientProvider } from '@app/electrodb'
+import { join } from 'path'; 
 
 // Logging on/off
 const useLogger = false;
@@ -16,13 +20,14 @@ let repository: TodosRepository;
 
 
 const electrodbTestModule = Test.createTestingModule({
-  imports: [
-      ElectroDBModule.register({
-      provide: TodosRepository,
-      useClass: ElectroDbTodoRepository
-    })
-   
-  ]
+  imports: [TodosElectroDBRepoModule.register(localDocClientProvider), ConfigModule.forRoot({
+    isGlobal: true,
+    envFilePath: [
+      join('apps/todos/',
+        `.env.${process.env.NODE_ENV}`),
+      'apps/todos/.env.build.local'
+    ]
+  })]
 }).setLogger(new ConsoleLogger('Repo Logger', { logLevels: levels }))
   .compile();
 
@@ -124,6 +129,7 @@ describe.each(fixtures)("RepositoryService", (fixture) => {
     let pages = 1;
 
     // Paginate through results
+    // FIXME ... Change the behavior of next ... need to investigate!!!!
     do {
       const res = await repository.findAll(next);
 
@@ -134,7 +140,7 @@ describe.each(fixtures)("RepositoryService", (fixture) => {
         "RepositoryService");
       pages++;
       next = res.next ? res.next : undefined;
-      
+
     } while (next !== null);
 
     // Sort todos by the numerical value of the test number in the title

@@ -19,8 +19,10 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/made-in-canada/test/jest-e2e.json",
     "update-build": "echo \"BUILD_ID=$(date +%s)\" > ",
-    "todos:start:dev": "NODE_ENV=development PREMISE=local npm run start:dev todos",
-    "todos-sls:build": "npm run update-build apps/todos/.env.build.local && nest build todos-sls && cp apps/todos/.env.build.local serverless/todos/apps/todos"
+
+    "todos:start:dev": "NODE_ENV=development npm run start:dev todos",
+    "todos-sls:build": "npm run update-build apps/todos/.env.build.local && nest build todos-sls && cp apps/todos/.env.build.local serverless/todos/apps/todos",
+    "test:todos-repos": "NODE_ENV=development jest apps/todos/src/todos/repositories/respository.spec.ts"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.712.0",

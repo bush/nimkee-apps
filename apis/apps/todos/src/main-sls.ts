@@ -3,9 +3,6 @@ import serverlessExpress from '@codegenie/serverless-express';
 
 import { nestInit } from "./nest-init";
 
-// Note: To build with this file instead of src/main.ts,
-// change the entryFile property in nest-cli.json to "main-sls"
-
 let server: Handler;
 
 async function bootstrap() {

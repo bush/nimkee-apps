@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "NODE_ENV=development nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/apps/made-in-canada/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -20,11 +20,10 @@
     "test:e2e": "jest --config ./apps/made-in-canada/test/jest-e2e.json",
     "update-build": "echo \"BUILD_ID=$(date +%s)\" > ",
 
-    "todos:start:dev": "NODE_ENV=development npm run start:dev todos",
     "todos-sls:build": "npm run update-build apps/todos/.env.build.local && nest build todos-sls && cp apps/todos/.env.build.local serverless/todos/apps/todos",
     "test:todos-repos": "NODE_ENV=development jest apps/todos/src/todos/repositories/respository.spec.ts",
     "test:todos": "NODE_ENV=test jest --testPathIgnorePatterns=apps/todos/src/todos/repositories/respository.spec.ts todos",
-    "test:todos:e2e": "jest --config ./apps/todos/test/jest-e2e.json"
+    "test:todos:e2e": "NODE_ENV=development jest --config ./apps/todos/test/jest-e2e.json todos"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.712.0",

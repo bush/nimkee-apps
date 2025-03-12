@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TodosController } from './todos.controller';
 import { TodosService } from './todos.service';
-import { TodosRepositoryElectorDBModule } from './repositories/electrodb/todos-repository.module';
+import { TodosElectroDBRepoModule } from './repositories/electrodb/todos-repository.module';
 
 const impl = 'electrodb';
 
@@ -13,7 +13,7 @@ describe('TodosController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TodosController],
       providers: [TodosService],
-      imports: [TodosRepositoryElectorDBModule],
+      imports: [TodosElectroDBRepoModule],
     }).compile();
 
     controller = module.get<TodosController>(TodosController);

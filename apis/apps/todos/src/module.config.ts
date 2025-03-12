@@ -1,5 +1,5 @@
 import { localDocClientProvider, prodDocClientProvider } from '@app/electrodb'
-import { TodosElectroDBRepoModule } from './todos/repositories/electrodb/todos-repostitory.module';
+import { TodosElectroDBRepoModule } from './todos/repositories/electrodb/todos-repository.module';
 
 // This is for build-time configuration.  Here we can wire out modules in various ways
 // depending on which adapters we want to use.

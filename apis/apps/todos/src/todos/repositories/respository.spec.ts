@@ -5,7 +5,7 @@ import { TodoPreview } from "../interfaces/todo";
 import { TodosRepository } from "../interfaces/todos-repository";
 
 import { ElectroDbTodoRepository } from './electrodb/todos-repository.service' 
-import { TodosElectroDBRepoModule } from './electrodb/todos-repostitory.module';
+import { TodosElectroDBRepoModule } from './electrodb/todos-repository.module';
 
 import { localDocClientProvider, prodDocClientProvider } from '@app/electrodb'
 import { join } from 'path'; 

@@ -1,13 +1,14 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+
 import { TodosService } from './todos.service';
 import { TodosController } from './todos.controller';
-import { TodosRepositoryElectorDBModule } from './repositories/electrodb/todos-repository.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { todosRepositoryModule } from '../module.config'
 
 @Module({
   controllers: [TodosController],
   providers: [TodosService],
-  imports: [TodosRepositoryElectorDBModule],
+  imports: [todosRepositoryModule],
 })
 export class TodosModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

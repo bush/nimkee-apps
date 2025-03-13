@@ -10,6 +10,15 @@
   "monorepo": true,
   "root": "apps/made-in-canada",
   "projects": {
+    "electrodb": {
+      "type": "library",
+      "root": "libs/electrodb",
+      "entryFile": "index",
+      "sourceRoot": "libs/electrodb/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/electrodb/tsconfig.lib.json"
+      }
+    },
     "made-in-canada": {
       "type": "application",
       "root": "apps/made-in-canada",
@@ -26,6 +35,24 @@
       "sourceRoot": "apps/quickeat/src",
       "compilerOptions": {
         "tsConfigPath": "apps/quickeat/tsconfig.app.json"
+      }
+    },
+    "todos": {
+      "type": "application",
+      "root": "apps/todos",
+      "entryFile": "main",
+      "sourceRoot": "apps/todos/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/todos/tsconfig.app.json"
+      }
+    },
+    "todos-sls": {
+      "type": "application",
+      "root": "apps/todos",
+      "entryFile": "main-sls",
+      "sourceRoot": "apps/todos/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/todos/tsconfig.app.json"
       }
     }
   }

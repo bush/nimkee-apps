@@ -1,36 +1,42 @@
-import { Module } from '@nestjs/common';
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+// Nestjs Imports
+import { ConfigService } from '@nestjs/config';
+import { DynamicModule, Module, Provider } from '@nestjs/common';
 
-import { TodoConfig } from './todos-config';
-import { ElectroDbTodoRepository } from './todos-repository.service';
+// External imports
+import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
+
+// Local imports
 import { TodosRepository } from '../../interfaces/todos-repository';
+import { ElectroDbTodoRepository } from './todos-repository.service';
 
-const TodosRepositoryProvider = { provide: TodosRepository, useClass: ElectroDbTodoRepository };
+const TodosRepositoryProvider = {
+  provide: TodosRepository,
+  useClass: ElectroDbTodoRepository
+};
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      envFilePath: `config/dynamodb/.${process.env.NODE_ENV}.env`,
-    }),
-  ],
   providers: [
-    TodosRepositoryProvider,
-    TodoConfig,
-    {
-      provide: DynamoDBClient,
+    TodosRepositoryProvider, {
+      provide: 'TABLE_CONFIG',
       useFactory: (config: ConfigService) => {
-        console.log(`ACCESS_KEY: ${process.env.AWS_ACCESS_KEY_ID}`)
-
-        return new DynamoDBClient({
-
-              endpoint: config.get<string>('ENDPOINT'),
-              region: config.get<string>('TODO_TABLE_REGION'),
-            })
+        return {
+          tableName: config.get<string>('TODO_TABLE_TABLENAME'),
+          pkName: config.get<string>('TODO_TABLE_PKNAME'),
+          skName: config.get<string>('TODO_TABLE_SKNAME')
+        }
       },
-      inject: [ConfigService],
-    },
+      inject: [ConfigService]
+    }
   ],
-  exports: [TodosRepositoryProvider],
+  exports: [TodosRepositoryProvider]
 })
-export class TodosRepositoryElectorDBModule { }
+
+export class TodosElectroDBRepoModule { 
+  static register(dynamoDBDocumentProvider: Provider<DynamoDBDocument>): DynamicModule {
+    return {
+      module: TodosElectroDBRepoModule,
+      providers: [TodosRepositoryProvider, dynamoDBDocumentProvider],
+      exports: [TodosRepositoryProvider]
+    }
+  }
+}

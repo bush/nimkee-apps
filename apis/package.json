@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "NODE_ENV=development nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/apps/made-in-canada/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -17,10 +17,17 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/made-in-canada/test/jest-e2e.json"
+    "test:e2e": "jest --config ./apps/made-in-canada/test/jest-e2e.json",
+    "update-build": "echo \"BUILD_ID=$(date +%s)\" > ",
+
+    "todos-sls:build": "npm run update-build apps/todos/.env.build.local && nest build todos-sls && cp apps/todos/.env.build.local serverless/todos/apps/todos",
+    "test:todos-repos": "NODE_ENV=development jest apps/todos/src/todos/repositories/respository.spec.ts",
+    "test:todos": "NODE_ENV=test jest --testPathIgnorePatterns=apps/todos/src/todos/repositories/respository.spec.ts todos",
+    "test:todos:e2e": "NODE_ENV=development jest --config ./apps/todos/test/jest-e2e.json todos"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.712.0",
+    "@aws-sdk/credential-providers": "^3.758.0",
     "@codegenie/serverless-express": "^4.16.0",
     "@nestjs/common": "^11.0.11",
     "@nestjs/config": "^4.0.1",
@@ -34,6 +41,7 @@
     "aws-sdk": "^2.1692.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "copy-webpack-plugin": "^13.0.0",
     "electrodb": "^3.0.1",
     "jwks-rsa": "^3.1.0",
     "passport": "^0.7.0",
@@ -45,14 +53,14 @@
     "util": "^0.12.5"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.18.0",
     "@nestjs/cli": "^11.0.5",
     "@nestjs/schematics": "^11.0.1",
     "@nestjs/testing": "^11.0.11",
-    "@types/express": "^5.0.0",
-    "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "^9.18.0",
     "@swc/cli": "^0.6.0",
     "@swc/core": "^1.10.7",
+    "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
     "@types/passport-jwt": "^4.0.1",
@@ -91,7 +99,11 @@
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "roots": [
-      "<rootDir>/apps/"
-    ]
+      "<rootDir>/apps/",
+      "<rootDir>/libs/"
+    ],
+    "moduleNameMapper": {
+      "^@app/electrodb(|/.*)$": "<rootDir>/libs/electrodb/src/$1"
+    }
   }
 }

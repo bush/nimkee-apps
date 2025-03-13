@@ -1,22 +1,35 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ConsoleLogger, Logger } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { TodoConfig } from "./electrodb/todos-config";
+import { ConsoleLogger, Logger, LogLevel } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TodoPreview } from "../interfaces/todo";
 import { TodosRepository } from "../interfaces/todos-repository";
-import { TodosRepositoryElectorDBModule } from "./electrodb/todos-repository.module";
 
-import util from "util";
+import { ElectroDbTodoRepository } from './electrodb/todos-repository.service' 
+import { TodosElectroDBRepoModule } from './electrodb/todos-repository.module';
+
+import { localDocClientProvider, prodDocClientProvider } from '@app/electrodb'
+import { join } from 'path'; 
 
 // Logging on/off
 const useLogger = false;
+const levels: LogLevel[]  = ['log', 'error', 'warn'];
+//const levels: LogLevel[]  = [];
+const defaultTableName = 'TodosTable';
 
 let repository: TodosRepository;
 
+
 const electrodbTestModule = Test.createTestingModule({
-  imports: [TodosRepositoryElectorDBModule],
-})
-  .setLogger(useLogger ? new ConsoleLogger() : null)
+  imports: [TodosElectroDBRepoModule.register(localDocClientProvider),
+    ConfigModule.forRoot({
+    isGlobal: true,
+    envFilePath: [
+      join('apps/todos/',
+        `.env.${process.env.NODE_ENV}`),
+      'apps/todos/.env.build.local'
+    ]
+  })]
+}).setLogger(new ConsoleLogger('Repo Logger', { logLevels: levels }))
   .compile();
 
 const fixtures = [
@@ -26,19 +39,21 @@ const fixtures = [
 
     all: (testModule: TestingModule) => {
       const config = testModule.get<ConfigService>(ConfigService);
-      const todoConfig = testModule.get<TodoConfig>(TodoConfig);
-      todoConfig.entity.setTableName(config.get("TODO_TABLE_TABLENAME"));
+      const todoRepo = testModule.get<ElectroDbTodoRepository>(TodosRepository);
+      const tableName = config.get("TODO_TABLE_TABLENAME") || defaultTableName
+      todoRepo.todos.setTableName(tableName);
     },
 
     each: (testModule: TestingModule) => {
       const config = testModule.get<ConfigService>(ConfigService);
-      const todoConfig = testModule.get<TodoConfig>(TodoConfig);
-      todoConfig.entity.setTableName(config.get("TODO_TABLE_TABLENAME"));
+      const todoRepo = testModule.get<ElectroDbTodoRepository>(TodosRepository);
+      const tableName = config.get("TODO_TABLE_TABLENAME") || defaultTableName
+      todoRepo.todos.setTableName(tableName);
     },
 
     ["should get all todos"]: (testModule: TestingModule) => {
-      const todoConfig = testModule.get<TodoConfig>(TodoConfig);
-      todoConfig.entity.setTableName("todo-table-empty-1");
+      const todoRepo = testModule.get<ElectroDbTodoRepository>(TodosRepository);
+      todoRepo.todos.setTableName("todo-table-empty-1");
     },
   },
 ];
@@ -98,10 +113,10 @@ describe.each(fixtures)("RepositoryService", (fixture) => {
   testName = "should get all todos";
   it(testName, async () => {
     const testModule = await fixture.module;
-  
+
     // Test specific setup
     fixture[testName]?.(testModule);
-   
+
     // Create 20 test todos
     for (let index = 0; index < 20; index++) {
       await repository.create({
@@ -109,34 +124,37 @@ describe.each(fixtures)("RepositoryService", (fixture) => {
         isCompleted: false,
       });
     }
-  
+
     let todos: TodoPreview[] = [];
-    let next = null;
+    let next:string | undefined = undefined;
     let pages = 1;
-  
+
     // Paginate through results
+    // FIXME ... Change the behavior of next ... need to investigate!!!!
     do {
       const res = await repository.findAll(next);
-  
+
       // Accumulate todos and move to the next page
       todos.push(...res.todos);
-  
-      Logger.log(`Page ${pages}: Fetched ${res.todos.length} todos`, "RepositoryService");
+
+      Logger.log(`Page ${pages}: Fetched ${res.todos.length} todos`,
+        "RepositoryService");
       pages++;
-      next = res.next;
-    } while (next !== null);
-  
+      next = 'next' in res ? res.next : undefined;
+
+    } while (next !== undefined);
+
     // Sort todos by the numerical value of the test number in the title
     todos.sort((a, b) => {
       const numA = parseInt(a.title.match(/\d+$/)?.[0] || "0", 10);
       const numB = parseInt(b.title.match(/\d+$/)?.[0] || "0", 10);
       return numA - numB;
     });
-  
+
     // Final assertions
     Logger.log(`Total todos fetched: ${todos.length}`, "RepositoryService");
     expect(todos.length).toBe(20);
-  
+
     // Validate overall correctness after sorting
     for (let i = 0; i < todos.length; i++) {
       expect(todos[i].title).toBe(`Test Todo ${i}`);

@@ -1,4 +1,7 @@
+const path = require('path');
+
 module.exports = (options, webpack) => {
+
   const lazyImports = [
     '@nestjs/microservices/microservices-module',
     '@nestjs/websockets/socket-module',
@@ -35,7 +38,7 @@ module.exports = (options, webpack) => {
           }
           return false;
         },
-      }),
+      })
     ],
   };
 };

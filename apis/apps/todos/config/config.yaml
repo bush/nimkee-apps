@@ -1,8 +1,0 @@
-repositories:
-  todos: electrodb1
-    
-
-db:
-  dynamodb:
-    region: us-east-1
-

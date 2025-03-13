@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, Logger } from '@nestjs/common';
-import request from 'supertest';
+import * as request from 'supertest';
+import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
 import { ValidationPipe, ConsoleLogger } from '@nestjs/common';
 
@@ -17,7 +18,7 @@ const auth0 = {
 const logger = false;
 
 describe('AppController (e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication<App>;
   let jwt: string;
   let id: string;
   let server: any;
@@ -70,7 +71,7 @@ describe('AppController (e2e)', () => {
       .set('Authorization', `Bearer ${jwt}`)
       .send(todo)
       .expect(201);
-    const { id } = res.body;
+    id = res.body.id;
     expect(id).toContain('-');
   });
 

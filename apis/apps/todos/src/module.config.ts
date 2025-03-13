@@ -8,8 +8,8 @@ import { TodosElectroDBRepoModule } from './todos/repositories/electrodb/todos-r
 //export const todosRepositoryModule = TodosMongoDBModule;
 
 // Here we can switch to the remote dynambo db configuration when we deploy to production.
-export const todosRepositoryModule = TodosElectroDBRepoModule.register(localDocClientProvider);
-//export const todosRepositoryModule = TodosElectroDBRepoModule.register(prodDocClientProvider);
+//export const todosRepositoryModule = TodosElectroDBRepoModule.register(localDocClientProvider);
+export const todosRepositoryModule = TodosElectroDBRepoModule.register(prodDocClientProvider);
 
 // Configure other adapters here ...
 

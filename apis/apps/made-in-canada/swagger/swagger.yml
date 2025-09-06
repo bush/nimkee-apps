@@ -1,0 +1,191 @@
+openapi: 3.0.0
+info:
+  title: Made in Canada API
+  description: API for managing and accessing Canadian businesses and products.
+  version: 1.0.0
+servers:
+  - url: https://api.madeincanada.ca/v1
+    description: Production server
+  - url: https://sandbox-api.madeincanada.ca/v1
+    description: Sandbox server
+paths:
+  /businesses:
+    get:
+      summary: Retrieve a list of businesses
+      description: Fetch a list of Canadian businesses with optional filters for category and location.
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: Filter businesses by category
+        - in: query
+          name: location
+          schema:
+            type: string
+          description: Filter businesses by location
+      responses:
+        '200':
+          description: A list of businesses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Business'
+    post:
+      summary: Add a new business
+      description: Submit a new business to the directory.
+      requestBody:
+        description: Business object to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Business'
+      responses:
+        '201':
+          description: Business created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Business'
+  /businesses/{businessId}:
+    get:
+      summary: Retrieve a business by ID
+      description: Get detailed information about a specific business.
+      parameters:
+        - in: path
+          name: businessId
+          required: true
+          schema:
+            type: string
+          description: The ID of the business to retrieve
+      responses:
+        '200':
+          description: Business details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Business'
+        '404':
+          description: Business not found
+  /reviews:
+    get:
+      summary: Retrieve reviews
+      description: Fetch a list of reviews with optional filters for business ID.
+      parameters:
+        - in: query
+          name: businessId
+          schema:
+            type: string
+          description: Filter reviews by business ID
+      responses:
+        '200':
+          description: A list of reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+    post:
+      summary: Add a new review
+      description: Submit a new review for a business.
+      requestBody:
+        description: Review object to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Review'
+      responses:
+        '201':
+          description: Review created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+  /categories:
+    get:
+      summary: Retrieve categories
+      description: Fetch a list of business categories.
+      responses:
+        '200':
+          description: A list of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+components:
+  schemas:
+    Business:
+      type: object
+      required:
+        - name
+        - description
+        - location
+        - category
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the business
+        name:
+          type: string
+          description: Name of the business
+        description:
+          type: string
+          description: Description of the business
+        location:
+          type: string
+          description: Location of the business
+        category:
+          type: string
+          description: Category of the business
+        website:
+          type: string
+          description: Website URL of the business
+        contactEmail:
+          type: string
+          description: Contact email of the business
+        contactPhone:
+          type: string
+          description: Contact phone number of the business
+    Review:
+      type: object
+      required:
+        - businessId
+        - rating
+        - comment
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the review
+        businessId:
+          type: string
+          description: ID of the business being reviewed
+        rating:
+          type: integer
+          format: int32
+          description: Rating given to the business (1-5)
+        comment:
+          type: string
+          description: Comment about the business
+        reviewerName:
+          type: string
+          description: Name of the reviewer
+        reviewDate:
+          type: string
+          format: date-time
+          description: Date when the review was submitted
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the category
+        name:
+          type: string
+          description: Name of the category

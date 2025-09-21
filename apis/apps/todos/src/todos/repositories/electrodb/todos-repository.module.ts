@@ -14,6 +14,9 @@ const TodosRepositoryProvider = {
   useClass: ElectroDbTodoRepository
 };
 
+// Thoughts: After re-reading the nestjs docs I second guessed having this as a module.
+// But after more consideration this could be considered a feature module as it acts as
+// a plugin to the todos module.
 @Module({
   providers: [
     TodosRepositoryProvider, {
@@ -28,10 +31,11 @@ const TodosRepositoryProvider = {
       inject: [ConfigService]
     }
   ],
+
   exports: [TodosRepositoryProvider]
 })
 
-export class TodosElectroDBRepoModule { 
+export class TodosElectroDBRepoModule {
   static register(dynamoDBDocumentProvider: Provider<DynamoDBDocument>): DynamicModule {
     return {
       module: TodosElectroDBRepoModule,

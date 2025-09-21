@@ -4,24 +4,29 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TodoPreview } from "../interfaces/todo";
 import { TodosRepository } from "../interfaces/todos-repository";
 
-import { ElectroDbTodoRepository } from './electrodb/todos-repository.service' 
+import { ElectroDbTodoRepository } from './electrodb/todos-repository.service'
 import { TodosElectroDBRepoModule } from './electrodb/todos-repository.module';
 
 import { localDocClientProvider, prodDocClientProvider } from '@app/electrodb'
-import { join } from 'path'; 
+import { join } from 'path';
+import * as shell from 'shelljs'
+
+
+
 
 // Logging on/off
-const useLogger = false;
 const levels: LogLevel[]  = ['log', 'error', 'warn'];
-//const levels: LogLevel[]  = [];
-const defaultTableName = 'TodosTable';
-
+//const levels: LogLevel[] = [];
 let repository: TodosRepository;
 
+function restartComposeStack(composeFile: string) {
+  return shell.exec(`docker compose -f ${composeFile} restart`,
+    { fatal: true, silent: true }).stdout;
+};
 
 const electrodbTestModule = Test.createTestingModule({
   imports: [TodosElectroDBRepoModule.register(localDocClientProvider),
-    ConfigModule.forRoot({
+  ConfigModule.forRoot({
     isGlobal: true,
     envFilePath: [
       join('apps/todos/',
@@ -36,26 +41,8 @@ const fixtures = [
   {
     mapper: "electrodb",
     module: electrodbTestModule,
-
-    all: (testModule: TestingModule) => {
-      const config = testModule.get<ConfigService>(ConfigService);
-      const todoRepo = testModule.get<ElectroDbTodoRepository>(TodosRepository);
-      const tableName = config.get("TODO_TABLE_TABLENAME") || defaultTableName
-      todoRepo.todos.setTableName(tableName);
-    },
-
-    each: (testModule: TestingModule) => {
-      const config = testModule.get<ConfigService>(ConfigService);
-      const todoRepo = testModule.get<ElectroDbTodoRepository>(TodosRepository);
-      const tableName = config.get("TODO_TABLE_TABLENAME") || defaultTableName
-      todoRepo.todos.setTableName(tableName);
-    },
-
-    ["should get all todos"]: (testModule: TestingModule) => {
-      const todoRepo = testModule.get<ElectroDbTodoRepository>(TodosRepository);
-      todoRepo.todos.setTableName("todo-table-empty-1");
-    },
-  },
+    compose: 'apps/todos/test/dynamodb/docker-compose.yml'
+  }
 ];
 
 
@@ -66,19 +53,20 @@ describe.each(fixtures)("RepositoryService", (fixture) => {
   beforeAll(async () => {
     Logger.log(`NODE_ENV: ${process.env.NODE_ENV}`, "RepositoryService");
     const testModule = await fixture.module;
-    fixture.all(testModule);
     repository = testModule.get<TodosRepository>(TodosRepository);
   });
 
   beforeEach(async () => {
     const testModule = await fixture.module;
-    fixture.each?.(testModule);
 
     Logger.log(
       `NODE_ENV: ${process.env.NODE_ENV}, mapper: ${fixture.mapper}`,
       "RepositoryService"
     );
+    restartComposeStack(fixture.compose);
   });
+
+
 
   it("NOOP", async () => {
     Logger.log("NOOP");
@@ -126,7 +114,7 @@ describe.each(fixtures)("RepositoryService", (fixture) => {
     }
 
     let todos: TodoPreview[] = [];
-    let next:string | undefined = undefined;
+    let next: string | undefined = undefined;
     let pages = 1;
 
     // Paginate through results

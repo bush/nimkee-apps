@@ -5,6 +5,12 @@ module.exports = (options, webpack) => {
   const lazyImports = [
     '@nestjs/microservices/microservices-module',
     '@nestjs/websockets/socket-module',
+    'kafkajs',
+    'mqtt',
+    'nats',
+    'ioredis',
+    'amqplib',
+    'amqp-connection-manager',
   ];
 
   const TerserPlugin = require('terser-webpack-plugin');

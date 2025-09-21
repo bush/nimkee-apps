@@ -37,6 +37,24 @@
         "tsConfigPath": "apps/quickeat/tsconfig.app.json"
       }
     },
+    "service-b": {
+      "type": "application",
+      "root": "apps/service-b",
+      "entryFile": "main",
+      "sourceRoot": "apps/service-b/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/service-b/tsconfig.app.json"
+      }
+    },
+    "service-demo": {
+      "type": "application",
+      "root": "apps/service-demo",
+      "entryFile": "main",
+      "sourceRoot": "apps/service-demo/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/service-demo/tsconfig.app.json"
+      }
+    },
     "todos": {
       "type": "application",
       "root": "apps/todos",

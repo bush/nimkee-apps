@@ -1,22 +1,20 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { ConsoleLogger, Logger, LogLevel } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { TodoPreview } from "../interfaces/todo";
-import { TodosRepository } from "../interfaces/todos-repository";
-
-import { ElectroDbTodoRepository } from './electrodb/todos-repository.service'
-import { TodosElectroDBRepoModule } from './electrodb/todos-repository.module';
-
-import { localDocClientProvider, prodDocClientProvider } from '@app/electrodb'
 import { join } from 'path';
 import * as shell from 'shelljs'
 
+import { Test } from "@nestjs/testing";
+import { ConfigModule } from "@nestjs/config";
+import { ConsoleLogger, Logger, LogLevel } from "@nestjs/common";
 
+import { TodoPreview } from "../interfaces/todo";
+import { TodosRepository } from "../interfaces/todos-repository";
+import { TodosElectroDBRepoModule } from './electrodb/todos-repository.module';
+import { localDocClientProvider, prodDocClientProvider } from '@app/electrodb'
 
-
+// SETTINGS
 // Logging on/off
 const levels: LogLevel[]  = ['log', 'error', 'warn'];
 //const levels: LogLevel[] = [];
+
 let repository: TodosRepository;
 
 function restartComposeStack(composeFile: string) {
@@ -46,7 +44,6 @@ const fixtures = [
 ];
 
 
-let testName = '';
 // Currently we only support electrodb for dynamodb but could support others in
 // the future. The idea is to test to the repository interface.
 describe.each(fixtures)("RepositoryService", (fixture) => {
@@ -65,7 +62,6 @@ describe.each(fixtures)("RepositoryService", (fixture) => {
     );
     restartComposeStack(fixture.compose);
   });
-
 
 
   it("NOOP", async () => {
@@ -97,13 +93,8 @@ describe.each(fixtures)("RepositoryService", (fixture) => {
     expect(foundTodo).toEqual(updatedTodo);
   });
 
-
-  testName = "should get all todos";
-  it(testName, async () => {
+  it("should get all todos", async () => {
     const testModule = await fixture.module;
-
-    // Test specific setup
-    fixture[testName]?.(testModule);
 
     // Create 20 test todos
     for (let index = 0; index < 20; index++) {

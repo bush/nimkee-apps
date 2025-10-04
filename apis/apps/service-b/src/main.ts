@@ -16,6 +16,6 @@ async function bootstrap() {
     },
   );
   await app.listen();
-  console.log('Service B is listening on TCP port 3001');
+  console.log('Service B is listening on TCP port 3001 already');
 }
 bootstrap();

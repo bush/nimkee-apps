@@ -1,29 +1,22 @@
-import { ClientProxy, MessagePattern } from '@nestjs/microservices';
-import { Controller, Get, Post, Body, Inject } from '@nestjs/common';
-import { firstValueFrom } from 'rxjs';
-
+import { Logger } from '@nestjs/common'
 import { ServiceDemoService } from './service-demo.service';
+import { Controller, Get, Post, Body } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices'
 
 @Controller()
 export class ServiceDemoController {
-  constructor(private readonly serviceDemoService: ServiceDemoService,
-    @Inject('SERVICE_B') private client: ClientProxy) { }
 
-  @Get()
-  getHello(): string {
-    return this.serviceDemoService.getHello();
-  }
-
-   @MessagePattern({ cmd: 'send_message' })
-    async receiveMessage(data: { text: string }) {
-      console.log('Received message:', data.text);
-      return { status: 'ok' };
-    }
+  constructor(private readonly serviceDemoService: ServiceDemoService) { }
 
   @Post('send')
-  async sendMessage(@Body('text') text: string) {
-    const response = await firstValueFrom(this.client.send({ cmd: 'send_message' }, { text }));
-    //const response = 'fake respose'
-    return { response };
+  sendMessage(@Body('data') data: any) {
+    Logger.log('sending message to subscribers')
+    return this.serviceDemoService.sendMessage(data);
+  }
+
+  @MessagePattern({ cmd: 'send_message' })
+  async receiveMessage(data: { data: any }) {
+    console.log('Received message:', data);
+    return { status: 'ok' };
   }
 }

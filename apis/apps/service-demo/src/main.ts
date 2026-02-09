@@ -4,7 +4,7 @@ import { ServiceDemoModule } from './service-demo.module';
 
 const localOptions:MicroserviceOptions = {
   transport: Transport.TCP,
-  options: { retryAttempts: 5, retryDelay: 3000 }
+  options: { retryAttempts: 5, retryDelay: 3000, host: '127.0.0.1', port: 3001 }
 };
 
 const remoteOptions:MicroserviceOptions = {
@@ -20,7 +20,7 @@ async function bootstrap() {
   const app = await NestFactory.create(ServiceDemoModule);
   const microservice = app.connectMicroservice<MicroserviceOptions>(localOptions);
   await app.startAllMicroservices();
-  const port = process.env.port ?? 3001
+  const port = process.env.port ?? 3000
   await app.listen(port);
   console.log(`Service A HTTP server running on port ${port}`);
 }

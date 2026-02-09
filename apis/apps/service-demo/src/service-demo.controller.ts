@@ -10,13 +10,15 @@ export class ServiceDemoController {
 
   @Post('send')
   sendMessage(@Body('data') data: any) {
-    Logger.log('sending message to subscribers')
+    Logger.log('SERVICE-DEMO: sending message to subscribers')
     return this.serviceDemoService.sendMessage(data);
   }
 
+  
+
   @MessagePattern({ cmd: 'send_message' })
   async receiveMessage(data: { data: any }) {
-    console.log('Received message:', data);
-    return { status: 'ok' };
+    console.log('SERVICE-DEMO: Received message:', data);
+    return { status: 'ok form service-demo' };
   }
 }

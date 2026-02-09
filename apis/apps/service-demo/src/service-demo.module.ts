@@ -6,7 +6,10 @@ import { ServiceDemoController } from './service-demo.controller';
 
 const localServiceBOptions: ClientProviderOptions = {
   name: 'SERVICE_B',
-  transport: Transport.TCP
+  transport: Transport.TCP,
+  options: {
+    port: 3001
+  }
 }
 
 const remoteServiceBOptions: ClientProviderOptions = {
@@ -14,12 +17,12 @@ const remoteServiceBOptions: ClientProviderOptions = {
   transport: Transport.TCP,
   options: {
     host: '127.0.0.1',
-    port: 3001,
+    port: 3002,
   },
 }
 
 @Module({
-  imports: [ClientsModule.register([localServiceBOptions])],
+  imports: [ClientsModule.register([remoteServiceBOptions])],
   controllers: [ServiceDemoController],
   providers: [ServiceDemoService]
 })

@@ -5,7 +5,7 @@ import { MessagePattern } from '@nestjs/microservices';
 export class ServiceBController {
   @MessagePattern({ cmd: 'send_message' })
   async receiveMessage(data: { text: string }) {
-    console.log('Received message:', data);    
-    return { status: 'ok' };
+    console.log('SERVICE-B: Received message:', data);    
+    return { status: 'ok from service-b' };
   }
 }

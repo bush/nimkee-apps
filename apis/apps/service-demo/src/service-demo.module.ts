@@ -1,29 +1,22 @@
 import { Module } from '@nestjs/common';
-import { ClientProviderOptions, ClientsModule, Transport } from '@nestjs/microservices';
 
 import { ServiceDemoService } from './service-demo.service';
 import { ServiceDemoController } from './service-demo.controller';
+import { OrdersModule } from './orders/orders.module';
 
-const localServiceBOptions: ClientProviderOptions = {
-  name: 'SERVICE_B',
-  transport: Transport.TCP,
-  options: {
-    port: 3001
-  }
-}
+import { PaymentsService } from './payments/payments.service';
+import { PaymentsListener } from './payments/payments.listener';
 
-const remoteServiceBOptions: ClientProviderOptions = {
-  name: 'SERVICE_B',
-  transport: Transport.TCP,
-  options: {
-    host: '127.0.0.1',
-    port: 3002,
-  },
-}
+import { serviceBusModule } from './module.config';
 
 @Module({
-  imports: [ClientsModule.register([remoteServiceBOptions])],
+  imports: [
+    serviceBusModule,
+    OrdersModule
+  ],
   controllers: [ServiceDemoController],
-  providers: [ServiceDemoService]
+  providers: [ServiceDemoService, PaymentsService, PaymentsListener]
 })
 export class ServiceDemoModule { }
+
+

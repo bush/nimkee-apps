@@ -1,0 +1,31 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { CreateOrderDto } from './dto/create-order.dto';
+import { UpdateOrderDto } from './dto/update-order.dto';
+import { ServiceBusService } from '../service-bus/service-bus';
+
+@Injectable()
+export class OrdersService {
+  constructor(private readonly serviceBus: ServiceBusService) {}
+
+  async create(createOrderDto: CreateOrderDto) {
+    Logger.log('creating order ...', 'Orders');
+    await this.serviceBus.publish('order.created', { id: 'my-order-id' });
+    return `order created - sick!`;
+  }
+
+  findAll() {
+    return `This action returns all orders`;
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} order`;
+  }
+
+  update(id: number, updateOrderDto: UpdateOrderDto) {
+    return `This action updates a #${id} order`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} order`;
+  }
+}

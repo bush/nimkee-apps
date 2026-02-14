@@ -14,8 +14,6 @@ export class ServiceDemoController {
     return this.serviceDemoService.sendMessage(data);
   }
 
-  
-
   @MessagePattern({ cmd: 'send_message' })
   async receiveMessage(data: { data: any }) {
     console.log('SERVICE-DEMO: Received message:', data);

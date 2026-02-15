@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ServiceBusClient } from '../../interfaces/service-bus-client';
+import { ServiceBusClient } from '../service-bus.interface';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable()

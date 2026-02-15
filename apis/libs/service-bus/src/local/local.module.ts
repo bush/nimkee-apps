@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { LocalEventPublisher } from './local';
+import { LocalServiceBusClient } from './local';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [EventEmitterModule.forRoot()],
-  providers: [LocalEventPublisher],
-  exports: [LocalEventPublisher],
+  providers: [LocalServiceBusClient],
+  exports: [LocalServiceBusClient],
 })
 export class LocalEventModule {}

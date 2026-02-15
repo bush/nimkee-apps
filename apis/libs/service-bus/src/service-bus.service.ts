@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ServiceBusClient } from '../interfaces/service-bus-client';
+import { ServiceBusClient } from './service-bus.interface';
 
 @Injectable()
 export class ServiceBusService {

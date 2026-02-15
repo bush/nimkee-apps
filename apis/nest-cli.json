@@ -46,6 +46,15 @@
         "tsConfigPath": "apps/service-b/tsconfig.app.json"
       }
     },
+    "service-bus": {
+      "type": "library",
+      "root": "libs/service-bus",
+      "entryFile": "index",
+      "sourceRoot": "libs/service-bus/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/service-bus/tsconfig.lib.json"
+      }
+    },
     "service-demo": {
       "type": "application",
       "root": "apps/service-demo",

@@ -23,6 +23,12 @@
       ],
       "@app/electrodb/*": [
         "libs/electrodb/src/*"
+      ],
+      "@app/service-bus": [
+        "libs/service-bus/src"
+      ],
+      "@app/service-bus/*": [
+        "libs/service-bus/src/*"
       ]
     }
   }

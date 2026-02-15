@@ -1,11 +1,15 @@
 import { Transport } from '@nestjs/microservices';
+import { ServiceBusModule } from '@app/service-bus';
 
-import { P2pServiceBusClient } from './service-bus/p2p/p2p-client';
-import { P2pServiceBusClientModule } from "./service-bus/p2p/p2p-client.module";
+// Local provider
 import { LocalEventPublisher } from './service-bus/local/local';
-import { ServiceBusModule } from "./service-bus/service-bus.module";
 import { LocalEventModule } from "./service-bus/local/local.module";
 
+// TCP transport provider
+import { P2pServiceBusClient } from '@app/service-bus/p2p/p2p-client';
+import { P2pServiceBusClientModule } from '@app/service-bus/p2p/p2p-client.module';
+
+// Wire up the clients
 export const serviceBusModule = ServiceBusModule.register({
     imports: [
         LocalEventModule,

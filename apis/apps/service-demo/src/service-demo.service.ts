@@ -1,12 +1,12 @@
 import { Logger, Injectable } from '@nestjs/common';
-import { ServiceBusService } from './service-bus/service-bus';
+import { ServiceBusService } from './service-bus/service-bus.service';
 
 @Injectable()
 export class ServiceDemoService {
-  constructor(private readonly events: ServiceBusService) {}
+  constructor(private readonly serviceBus: ServiceBusService) {}
 
   async sendMessage(data: any) {
     Logger.log('sending message');
-    //await this.events.publish('send_message', data);
+    return this.serviceBus.send('send_message', data);
   }
 }

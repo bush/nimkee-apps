@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common';
 
-import { ServiceBusService } from './service-bus';
+import { ServiceBusService } from './service-bus.service';
 import { ServiceBusClient } from '../interfaces/service-bus-client';
 import { ServiceBusOptions } from '../interfaces/service-bus-client';
 

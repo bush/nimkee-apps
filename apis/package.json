@@ -117,7 +117,8 @@
     ],
     "moduleNameMapper": {
       "^@app/electrodb(|/.*)$": "<rootDir>/libs/electrodb/src/$1",
-      "^@app/service-bus(|/.*)$": "<rootDir>/libs/service-bus/src/$1"
+      "^@app/service-bus(|/.*)$": "<rootDir>/libs/service-bus/src/$1",
+      "^@app/sns-sqs-transport(|/.*)$": "<rootDir>/libs/sns-sqs-transport/src/$1"
     }
   }
 }

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ServiceBusClient } from '../service-bus.interface';
+import { ServiceBusClient, MessagePattern } from '../service-bus.interface';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class P2pServiceBusClient implements ServiceBusClient {
     await lastValueFrom(this.client.emit(eventName, payload));
   }
 
-  async send(eventName: string, payload: unknown): Promise<any> {
-    return lastValueFrom(this.client.send({ cmd: eventName }, payload));
+  async send(pattern: MessagePattern, payload: unknown): Promise<any> {
+    return lastValueFrom(this.client.send(pattern, payload));
   }
 }

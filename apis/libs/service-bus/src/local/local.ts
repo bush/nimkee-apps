@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { ServiceBusClient } from '../service-bus.interface';
+import { ServiceBusClient, MessagePattern } from '../service-bus.interface';
 
 @Injectable()
 export class LocalServiceBusClient implements ServiceBusClient {
@@ -10,8 +10,9 @@ export class LocalServiceBusClient implements ServiceBusClient {
     this.eventEmitter.emit(eventName, payload);
   }
 
-  async send(eventName: string, payload: unknown): Promise<any> {
-    const results = await this.eventEmitter.emitAsync(eventName, payload);
+  async send(pattern: MessagePattern, payload: unknown): Promise<any> {
+    const eventKey = JSON.stringify(pattern);
+    const results = await this.eventEmitter.emitAsync(eventKey, payload);
     return results[0];
   }
 }

@@ -11,9 +11,14 @@ export class ServiceBusModule {
       imports: options.imports || [],
       providers: [
         {
-          provide: 'SERVICE_BUS_CLIENTS',
+          provide: 'SERVICE_BUS_LOCAL_CLIENT',
+          useFactory: (client: ServiceBusClient) => client,
+          inject: [options.localPublisher],
+        },
+        {
+          provide: 'SERVICE_BUS_REMOTE_CLIENTS',
           useFactory: (...clients: ServiceBusClient[]) => clients,
-          inject: options.publishers,
+          inject: options.remotePublishers || [],
         },
         ServiceBusService,
       ],

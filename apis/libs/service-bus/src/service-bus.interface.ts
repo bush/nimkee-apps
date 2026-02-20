@@ -1,12 +1,16 @@
 import { Type } from '@nestjs/common';
 
+export type MessagePattern = Record<string, any>;
+
+export type ServiceBusTarget = 'local' | 'remote';
 
 export interface ServiceBusOptions {
   imports?: any[];
-  publishers: Type<ServiceBusClient>[];
+  localPublisher: Type<ServiceBusClient>;
+  remotePublishers?: Type<ServiceBusClient>[];
 }
 
 export interface ServiceBusClient {
   publish(eventName: string, payload: unknown): Promise<void>;
-  send(eventName: string, payload: unknown): Promise<any>;
+  send(pattern: MessagePattern, payload: unknown): Promise<any>;
 }

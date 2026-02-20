@@ -7,6 +7,6 @@ export class ServiceDemoService {
 
   async sendMessage(data: any) {
     Logger.log('sending message');
-    return this.serviceBus.send('send_message', data);
+    return this.serviceBus.send({ service: 'payments' }, data, 'local');
   }
 }

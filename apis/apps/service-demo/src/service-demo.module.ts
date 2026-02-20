@@ -14,8 +14,8 @@ import { serviceBusModule } from './module.config';
     serviceBusModule,
     OrdersModule
   ],
-  controllers: [ServiceDemoController],
-  providers: [ServiceDemoService, PaymentsService, PaymentsListener]
+  controllers: [ServiceDemoController, PaymentsListener],
+  providers: [ServiceDemoService, PaymentsService]
 })
 export class ServiceDemoModule { }
 

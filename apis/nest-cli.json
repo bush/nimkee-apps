@@ -64,6 +64,15 @@
         "tsConfigPath": "apps/service-demo/tsconfig.app.json"
       }
     },
+    "sns-sqs-transport": {
+      "type": "library",
+      "root": "libs/sns-sqs-transport",
+      "entryFile": "index",
+      "sourceRoot": "libs/sns-sqs-transport/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/sns-sqs-transport/tsconfig.lib.json"
+      }
+    },
     "todos": {
       "type": "application",
       "root": "apps/todos",

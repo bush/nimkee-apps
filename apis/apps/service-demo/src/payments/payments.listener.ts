@@ -24,7 +24,7 @@ export class PaymentsListener {
     console.log('Payment listener received inventory.reservation_failed event:', payload);
   }
 
-  @OnMessage({ service: 'payments' })
+  @OnMessage({ cmd: 'process-payment' })
   async handleSendMessage(payload: any) {
     Logger.log(`Payments received send_message: ${util.inspect(payload)}`, 'Payments');
     return { status: 'ok from payments' };

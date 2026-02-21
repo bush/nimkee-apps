@@ -3,7 +3,7 @@ import { EventPattern, MessagePattern } from '@nestjs/microservices';
 
 @Controller()
 export class ServiceBController {
-  @MessagePattern({ cmd: 'send_message' })
+  @MessagePattern({ cmd: 'process-payment' })
   async receiveMessage(data: { text: string }) {
     console.log('SERVICE-B: Received message:', data);    
     return { status: 'ok from service-b' };

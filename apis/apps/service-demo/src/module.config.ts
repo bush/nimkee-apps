@@ -9,6 +9,14 @@ import {
     from '@app/service-bus';
 
 
+// Maps command names to transport names (defined in transports).
+// Commands not listed here default to local (EventEmitter2).
+// When a service is extracted from the monolith, add its commands here
+// to route them to the appropriate remote transport.
+const serviceMap = {
+    'process-payment': 'p2p',
+}
+
 export const remoteP2PPort: number = process.env.P2P_REMOTE_PORT !== undefined ?
     parseInt(process.env.P2P_REMOTE_PORT, 10) : 3002
 
@@ -22,6 +30,7 @@ export const serviceBusModule = ServiceBusModule.register({
             options: { host: '127.0.0.1', port: remoteP2PPort },
         }),
     ],
-    localPublisher: LocalServiceBusClient,
-    remotePublishers: [P2pServiceBusClient],
+    local: LocalServiceBusClient,
+    transports: { 'p2p': P2pServiceBusClient },
+    serviceMap,
 })

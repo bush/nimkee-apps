@@ -13,12 +13,21 @@ export class ServiceBusModule {
         {
           provide: 'SERVICE_BUS_LOCAL_CLIENT',
           useFactory: (client: ServiceBusClient) => client,
-          inject: [options.localPublisher],
+          inject: [options.local],
         },
         {
-          provide: 'SERVICE_BUS_REMOTE_CLIENTS',
-          useFactory: (...clients: ServiceBusClient[]) => clients,
-          inject: options.remotePublishers || [],
+          provide: 'SERVICE_BUS_TRANSPORTS',
+          useFactory: (...clients: ServiceBusClient[]) => {
+            const names = Object.keys(options.transports || {});
+            const map: Record<string, ServiceBusClient> = {};
+            names.forEach((name, i) => { map[name] = clients[i]; });
+            return map;
+          },
+          inject: Object.values(options.transports || {}),
+        },
+        {
+          provide: 'SERVICE_BUS_SERVICE_MAP',
+          useValue: options.serviceMap || {},
         },
         ServiceBusService,
       ],

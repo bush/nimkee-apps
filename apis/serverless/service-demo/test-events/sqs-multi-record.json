@@ -1,0 +1,16 @@
+{
+  "Records": [
+    {
+      "body": "{\"eventName\":\"order.created\",\"payload\":{\"orderId\":\"a\"}}",
+      "messageAttributes": {}
+    },
+    {
+      "body": "{\"eventName\":\"inventory.reservation_failed\",\"payload\":{\"sku\":\"X\"}}",
+      "messageAttributes": {}
+    },
+    {
+      "body": "{\"Type\":\"Notification\",\"Subject\":\"order.created\",\"Message\":\"{\\\"orderId\\\":\\\"b\\\"}\"}",
+      "messageAttributes": {}
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "Records": [
+    {
+      "body": "{\"eventName\":\"order.created\",\"payload\":{\"orderId\":\"test-123\"}}",
+      "messageAttributes": {}
+    }
+  ]
+}

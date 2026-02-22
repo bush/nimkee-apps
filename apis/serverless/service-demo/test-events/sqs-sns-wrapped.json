@@ -1,0 +1,8 @@
+{
+  "Records": [
+    {
+      "body": "{\"Type\":\"Notification\",\"Subject\":\"order.created\",\"Message\":\"{\\\"orderId\\\":\\\"test-456\\\"}\"}",
+      "messageAttributes": {}
+    }
+  ]
+}

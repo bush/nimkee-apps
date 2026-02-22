@@ -1,0 +1,63 @@
+org: bush75
+service: service-demo-serverless
+frameworkVersion: "4"
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  profile:
+    dev: default
+    prod: default
+
+package:
+  patterns:
+    - '!apps/**'
+    - 'dist/apps/service-demo/**'
+    - '!serverless.yml'
+
+provider:
+  name: aws
+  stage: dev
+  region: us-east-1
+  runtime: nodejs20.x
+  profile: ${self:custom.profile.${self:custom.stage}}
+  environment:
+    NODE_ENV: development
+    AWS_REGION: ${self:provider.region}
+    SNS_TOPIC_ARN: ${env:SNS_TOPIC_ARN, ''}
+    SQS_QUEUE_URL: ${env:SQS_QUEUE_URL, ''}
+    SQS_QUEUE_ARN: ${env:SQS_QUEUE_ARN, ''}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - sns:Publish
+          Resource: ${env:SNS_TOPIC_ARN, '*'}
+        - Effect: Allow
+          Action:
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueAttributes
+          Resource: ${env:SQS_QUEUE_ARN, '*'}
+
+functions:
+  service-demo:
+    handler: dist/apps/service-demo/main-sls.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
+
+  service-demo-sqs:
+    handler: dist/apps/service-demo/main-sls-sqs.handler
+    events:
+      - sqs:
+          arn: ${env:SQS_QUEUE_ARN, ''}
+          batchSize: 10
+          functionResponseType: ReportBatchItemFailures
+
+plugins:
+  - serverless-offline

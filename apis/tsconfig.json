@@ -23,6 +23,12 @@
       ],
       "@app/electrodb/*": [
         "libs/electrodb/src/*"
+      ],
+      "@app/sns-sqs": [
+        "libs/sns-sqs/src"
+      ],
+      "@app/sns-sqs/*": [
+        "libs/sns-sqs/src/*"
       ]
     }
   }

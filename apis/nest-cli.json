@@ -19,6 +19,15 @@
         "tsConfigPath": "libs/electrodb/tsconfig.lib.json"
       }
     },
+    "sns-sqs": {
+      "type": "library",
+      "root": "libs/sns-sqs",
+      "entryFile": "index",
+      "sourceRoot": "libs/sns-sqs/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/sns-sqs/tsconfig.lib.json"
+      }
+    },
     "made-in-canada": {
       "type": "application",
       "root": "apps/made-in-canada",

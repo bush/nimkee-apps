@@ -5,6 +5,7 @@ import {
   DeleteMessageCommand,
   Message,
 } from '@aws-sdk/client-sqs';
+import type { SQSRecord } from 'aws-lambda';
 import { SqsServerOptions } from '../interfaces/sns-sqs-options.interface';
 
 /**
@@ -47,6 +48,40 @@ export class SqsServer extends Server implements CustomTransportStrategy {
   // Returns the underlying SQS client for direct access if needed.
   unwrap<T>(): T {
     return this.sqsClient as unknown as T;
+  }
+
+  /**
+   * Dispatch a single Lambda SQSRecord through the registered handlers.
+   * Unlike dispatchMessage(), this does NOT delete the message — Lambda
+   * manages visibility/deletion based on the function's return value.
+   * Throws on error so the Lambda runtime can signal a batch-item failure.
+   */
+  async dispatchRecord(record: SQSRecord): Promise<void> {
+    let eventName: string | undefined;
+    let payload: unknown;
+
+    const body = JSON.parse(record.body);
+
+    if (body.Type === 'Notification') {
+      eventName = body.Subject;
+      payload = this.tryParseJson(body.Message);
+    } else {
+      eventName =
+        record.messageAttributes?.eventName?.stringValue ?? body.eventName;
+      payload = body.payload ?? body;
+    }
+
+    if (!eventName) {
+      this.logger.warn('Received SQS record without an event name — skipping');
+      return;
+    }
+
+    const handler = this.getHandlerByPattern(eventName);
+    if (handler) {
+      await handler(payload, {});
+    } else {
+      this.logger.warn(`No handler registered for event: "${eventName}"`);
+    }
   }
 
   close(): void {

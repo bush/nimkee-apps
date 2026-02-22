@@ -22,7 +22,9 @@
     "todos-sls:build": "npm run update-build apps/todos/.env.build.local && nest build todos-sls && cp apps/todos/.env.build.local serverless/todos/apps/todos",
     "test:todos-repos": "NODE_ENV=development jest apps/todos/src/todos/repositories/respository.spec.ts",
     "test:todos": "jest todos --testPathIgnorePatterns=apps/todos/src/todos/repositories/respository.spec.ts",
-    "test:todos:e2e": "NODE_ENV=development jest --config ./apps/todos/test/jest-e2e.json todos"
+    "test:todos:e2e": "NODE_ENV=development jest --config ./apps/todos/test/jest-e2e.json todos",
+    "service-demo-sls:build": "nest build service-demo-sls && nest build service-demo-sls-sqs",
+    "test:service-demo": "jest --testPathPattern=\"libs/sns-sqs/src/server/sqs-server.spec|apps/service-demo/src/main-sls\""
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.712.0",

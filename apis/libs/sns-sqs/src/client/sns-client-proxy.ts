@@ -70,4 +70,9 @@ export class SnsClientProxy extends ClientProxy {
     });
     return () => {};
   }
+
+  // Returns the underlying SNS client for direct access if needed.
+  unwrap<T>(): T {
+    return this.snsClient as unknown as T;
+  }
 }

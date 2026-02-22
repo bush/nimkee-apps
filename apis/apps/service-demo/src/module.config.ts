@@ -4,6 +4,7 @@ import {
     LocalEventModule, LocalServiceBusClient,
     P2pServiceBusClient, P2pServiceBusClientModule,
 } from '@app/service-bus';
+import { SnsServiceBusClient, SnsServiceBusClientModule } from '@app/sns-sqs';
 import { Commands } from './commands';
 
 
@@ -26,6 +27,11 @@ export const serviceBusModule = ServiceBusModule.register({
             name: 'P2P_SERVICE_BUS_CLIENT',
             transport: Transport.TCP,
             options: { host: '127.0.0.1', port: remoteP2PPort },
+        }),
+        SnsServiceBusClientModule.register({
+            region: process.env.AWS_REGION ?? 'us-east-1',
+            topicArn: process.env.SNS_TOPIC_ARN ?? '',
+            endpoint: process.env.AWS_ENDPOINT_URL,
         }),
     ],
     local: LocalServiceBusClient,

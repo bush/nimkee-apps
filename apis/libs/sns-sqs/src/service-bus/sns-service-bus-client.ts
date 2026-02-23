@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 import { SnsClientOptions } from '../interfaces/sns-sqs-options.interface';
+import { ServiceBusClient, MessagePattern } from '@app/service-bus';
 
 /**
  * Implements the app-level ServiceBusClient interface using AWS SNS.
@@ -18,7 +19,7 @@ import { SnsClientOptions } from '../interfaces/sns-sqs-options.interface';
  * - send(eventName, payload)    → throws; use SQS request/reply infrastructure instead
  */
 @Injectable()
-export class SnsServiceBusClient {
+export class SnsServiceBusClient implements ServiceBusClient {
   private readonly logger = new Logger(SnsServiceBusClient.name);
   private readonly snsClient: SNSClient;
   private readonly topicArn: string;
@@ -43,7 +44,7 @@ export class SnsServiceBusClient {
     );
   }
 
-  async send(_eventName: string, _payload: unknown): Promise<any> {
+  async send(_pattern: MessagePattern, _payload: unknown): Promise<any> {
     throw new Error(
       'SnsServiceBusClient does not support send() (request/reply). ' +
         'Use publish() for fire-and-forget events, or implement a ' +

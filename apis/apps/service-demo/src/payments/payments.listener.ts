@@ -2,6 +2,7 @@ import { Controller, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { OnMessage } from '@app/service-bus';
 import { PaymentsService } from './payments.service';
+import { Commands } from '../commands';
 import * as util from 'util';
 
 @Controller()
@@ -24,7 +25,7 @@ export class PaymentsListener {
     console.log('Payment listener received inventory.reservation_failed event:', payload);
   }
 
-  @OnMessage({ cmd: 'process-payment' })
+  @OnMessage({ cmd: Commands.PROCESS_PAYMENT })
   async handleSendMessage(payload: any) {
     Logger.log(`Payments received send_message: ${util.inspect(payload)}`, 'Payments');
     return { status: 'ok from payments' };

@@ -1,12 +1,10 @@
 import { Transport } from '@nestjs/microservices';
-import { ServiceBusModule } from '@app/service-bus';
-
-// Local provider
 import {
+    ServiceBusModule, TransportType,
     LocalEventModule, LocalServiceBusClient,
-    P2pServiceBusClient, P2pServiceBusClientModule
-}
-    from '@app/service-bus';
+    P2pServiceBusClient, P2pServiceBusClientModule,
+} from '@app/service-bus';
+import { Commands } from './commands';
 
 
 // Maps command names to transport names (defined in transports).
@@ -14,7 +12,7 @@ import {
 // When a service is extracted from the monolith, add its commands here
 // to route them to the appropriate remote transport.
 const serviceMap = {
-    'process-payment': 'p2p',
+    [Commands.PROCESS_PAYMENT]: TransportType.P2P,
 }
 
 export const remoteP2PPort: number = process.env.P2P_REMOTE_PORT !== undefined ?
@@ -31,6 +29,6 @@ export const serviceBusModule = ServiceBusModule.register({
         }),
     ],
     local: LocalServiceBusClient,
-    transports: { 'p2p': P2pServiceBusClient },
+    transports: { [TransportType.P2P]: P2pServiceBusClient },
     serviceMap,
 })

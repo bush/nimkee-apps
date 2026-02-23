@@ -3,6 +3,7 @@ import { ServiceDemoService } from './service-demo.service';
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { EventPattern, MessagePattern } from '@nestjs/microservices'
 import { OnMessage } from '@app/service-bus';
+import { Commands } from './commands';
 
 @Controller()
 export class ServiceDemoController {
@@ -21,7 +22,7 @@ export class ServiceDemoController {
 
   // This would be called by another service sending a message
   // to this service
-  @MessagePattern({ service: 'service-demo' })
+  @MessagePattern({ cmd: Commands.PROCESS_PAYMENT })
   //@OnMessage({ service: 'service-demo' })
   async receiveMessage(data: { data: any }) {
     Logger.log(`SERVICE-DEMO: Received message: ${JSON.stringify(data)}`);

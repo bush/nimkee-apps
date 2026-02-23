@@ -1,5 +1,6 @@
 import { Logger, Injectable } from '@nestjs/common';
 import { ServiceBusService } from '@app/service-bus';
+import { Commands } from './commands';
 
 @Injectable()
 export class ServiceDemoService {
@@ -7,6 +8,6 @@ export class ServiceDemoService {
 
   async sendMessage(data: any) {
     Logger.log('sending message');
-    return this.serviceBus.send({ cmd: 'process-payment' }, data);
+    return this.serviceBus.send({ cmd: Commands.PROCESS_PAYMENT }, data);
   }
 }

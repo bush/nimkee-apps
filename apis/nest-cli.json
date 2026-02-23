@@ -106,6 +106,7 @@
       "entryFile": "main-sls",
       "sourceRoot": "apps/service-demo/src",
       "compilerOptions": {
+        "deleteOutDir": false,
         "tsConfigPath": "apps/service-demo/tsconfig.app.json"
       }
     },
@@ -115,6 +116,7 @@
       "entryFile": "main-sls-sqs",
       "sourceRoot": "apps/service-demo/src",
       "compilerOptions": {
+        "deleteOutDir": false,
         "tsConfigPath": "apps/service-demo/tsconfig.app.json"
       }
     }

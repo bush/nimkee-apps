@@ -19,6 +19,15 @@
         "tsConfigPath": "libs/electrodb/tsconfig.lib.json"
       }
     },
+    "sns-sqs": {
+      "type": "library",
+      "root": "libs/sns-sqs",
+      "entryFile": "index",
+      "sourceRoot": "libs/sns-sqs/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/sns-sqs/tsconfig.lib.json"
+      }
+    },
     "made-in-canada": {
       "type": "application",
       "root": "apps/made-in-canada",
@@ -89,6 +98,26 @@
       "sourceRoot": "apps/todos/src",
       "compilerOptions": {
         "tsConfigPath": "apps/todos/tsconfig.app.json"
+      }
+    },
+    "service-demo-sls": {
+      "type": "application",
+      "root": "apps/service-demo",
+      "entryFile": "main-sls",
+      "sourceRoot": "apps/service-demo/src",
+      "compilerOptions": {
+        "deleteOutDir": false,
+        "tsConfigPath": "apps/service-demo/tsconfig.app.json"
+      }
+    },
+    "service-demo-sls-sqs": {
+      "type": "application",
+      "root": "apps/service-demo",
+      "entryFile": "main-sls-sqs",
+      "sourceRoot": "apps/service-demo/src",
+      "compilerOptions": {
+        "deleteOutDir": false,
+        "tsConfigPath": "apps/service-demo/tsconfig.app.json"
       }
     }
   }

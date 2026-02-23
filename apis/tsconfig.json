@@ -30,11 +30,11 @@
       "@app/service-bus/*": [
         "libs/service-bus/src/*"
       ],
-      "@app/sns-sqs-transport": [
-        "libs/sns-sqs-transport/src"
+      "@app/sns-sqs": [
+        "libs/sns-sqs/src"
       ],
-      "@app/sns-sqs-transport/*": [
-        "libs/sns-sqs-transport/src/*"
+      "@app/sns-sqs/*": [
+        "libs/sns-sqs/src/*"
       ]
     }
   }

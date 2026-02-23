@@ -7,19 +7,25 @@ import { ServiceBusModule } from "./service-bus/service-bus.module";
 import { LocalEventModule } from "./service-bus/local/local.module";
 import { SnsServiceBusClient, SnsServiceBusClientModule } from '@app/sns-sqs';
 
-export const serviceBusModule = ServiceBusModule.register({
-    imports: [
-        LocalEventModule,
-        P2pServiceBusClientModule.register({
-            name: 'P2P_SERVICE_BUS_CLIENT',
-            transport: Transport.TCP,
-            options: { host: '127.0.0.1', port: 3002 },
-        }),
-        SnsServiceBusClientModule.register({
-            region: process.env.AWS_REGION ?? 'us-east-1',
-            topicArn: process.env.SNS_TOPIC_ARN ?? '',
-            endpoint: process.env.AWS_ENDPOINT_URL,
-        }),
-    ],
-    publishers: [LocalEventPublisher, P2pServiceBusClient, SnsServiceBusClient],
-})
+const imports: any[] = [
+    LocalEventModule,
+    SnsServiceBusClientModule.register({
+        region: process.env.AWS_REGION ?? 'us-east-1',
+        topicArn: process.env.SNS_TOPIC_ARN ?? '',
+        endpoint: process.env.AWS_ENDPOINT_URL,
+    }),
+];
+
+// Uncomment to enable P2P transport
+// imports.push(
+//     P2pServiceBusClientModule.register({
+//         name: 'P2P_SERVICE_BUS_CLIENT',
+//         transport: Transport.TCP,
+//         options: { host: '127.0.0.1', port: 3002 },
+//     }),
+// );
+// publishers.push(P2pServiceBusClient);
+
+const publishers: any[] = [LocalEventPublisher, SnsServiceBusClient];
+
+export const serviceBusModule = ServiceBusModule.register({ imports, publishers })

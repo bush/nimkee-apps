@@ -2,6 +2,7 @@ import { Type } from '@nestjs/common';
 
 export enum TransportType {
   P2P = 'p2p',
+  SNS_SQS = 'sns-sqs',
   REDIS = 'redis',
   NATS = 'nats',
   KAFKA = 'kafka',

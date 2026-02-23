@@ -13,7 +13,7 @@ import { Commands } from './commands';
 // When a service is extracted from the monolith, add its commands here
 // to route them to the appropriate remote transport.
 const serviceMap = {
-    [Commands.PROCESS_PAYMENT]: TransportType.P2P,
+    [Commands.PROCESS_PAYMENT]: TransportType.SNS_SQS,
 }
 
 export const remoteP2PPort: number = process.env.P2P_REMOTE_PORT !== undefined ?
@@ -41,6 +41,6 @@ const imports: any[] = [
 export const serviceBusModule = ServiceBusModule.register({
     imports,
     local: LocalServiceBusClient,
-    // transports: { [TransportType.P2P]: P2pServiceBusClient },
+    transports: { [TransportType.SNS_SQS]: SnsServiceBusClient },
     serviceMap,
 })

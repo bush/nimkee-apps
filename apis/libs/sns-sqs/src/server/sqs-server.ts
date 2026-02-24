@@ -3,6 +3,7 @@ import {
   SQSClient,
   ReceiveMessageCommand,
   DeleteMessageCommand,
+  SendMessageCommand,
   Message,
 } from '@aws-sdk/client-sqs';
 import type { SQSRecord } from 'aws-lambda';
@@ -59,12 +60,17 @@ export class SqsServer extends Server implements CustomTransportStrategy {
   async dispatchRecord(record: SQSRecord): Promise<void> {
     let eventName: string | undefined;
     let payload: unknown;
+    let correlationId: string | undefined;
+    let replyQueueUrl: string | undefined;
 
     const body = JSON.parse(record.body);
 
     if (body.Type === 'Notification') {
       eventName = body.Subject;
       payload = this.tryParseJson(body.Message);
+      // SNS MessageAttributes (RawMessageDelivery=false) use { Type, Value }
+      correlationId = body.MessageAttributes?.correlationId?.Value;
+      replyQueueUrl = body.MessageAttributes?.replyQueueUrl?.Value;
     } else {
       eventName =
         record.messageAttributes?.eventName?.stringValue ?? body.eventName;
@@ -77,11 +83,39 @@ export class SqsServer extends Server implements CustomTransportStrategy {
     }
 
     const handler = this.getHandlerByPattern(eventName);
-    if (handler) {
-      await handler(payload, {});
-    } else {
+    if (!handler) {
       this.logger.warn(`No handler registered for event: "${eventName}"`);
+      return;
     }
+
+    const result = await handler(payload, {});
+
+    if (correlationId && replyQueueUrl) {
+      await this.sendReply(correlationId, replyQueueUrl, result);
+    }
+  }
+
+  private async sendReply(
+    correlationId: string,
+    replyQueueUrl: string,
+    responsePayload: unknown,
+  ): Promise<void> {
+    this.logger.log(
+      `Sending reply for correlationId=${correlationId}`,
+    );
+
+    await this.sqsClient.send(
+      new SendMessageCommand({
+        QueueUrl: replyQueueUrl,
+        MessageBody: JSON.stringify(responsePayload),
+        MessageAttributes: {
+          correlationId: {
+            DataType: 'String',
+            StringValue: correlationId,
+          },
+        },
+      }),
+    );
   }
 
   close(): void {

@@ -13,6 +13,10 @@ export interface SnsClientOptions {
   credentials?: AwsCredentials;
   /** Override endpoint URL, useful for LocalStack */
   endpoint?: string;
+  /** URL of the SQS queue to poll for request/reply responses */
+  replyQueueUrl?: string;
+  /** Timeout in ms for waiting for a reply (default: 30000) */
+  replyTimeoutMs?: number;
 }
 
 export interface SqsServerOptions {

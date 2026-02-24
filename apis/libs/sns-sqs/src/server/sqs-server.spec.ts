@@ -3,6 +3,7 @@ import {
   SQSClient,
   ReceiveMessageCommand,
   DeleteMessageCommand,
+  SendMessageCommand,
 } from '@aws-sdk/client-sqs';
 
 jest.mock('@aws-sdk/client-sqs');
@@ -195,6 +196,83 @@ describe('SqsServer', () => {
       );
 
       expect(handler).toHaveBeenCalledWith('plain string', {});
+    });
+
+    it('2.0 sends reply when correlationId and replyQueueUrl are present', async () => {
+      const handler = jest.fn().mockResolvedValue({ status: 'ok' });
+      noTimerServer.addHandler('{"cmd":"process-payment"}', handler);
+
+      await noTimerServer.dispatchRecord(
+        makeRecord({
+          Type: 'Notification',
+          Subject: '{"cmd":"process-payment"}',
+          Message: JSON.stringify({ amount: 100 }),
+          MessageAttributes: {
+            correlationId: { Type: 'String', Value: 'test-corr-id' },
+            replyQueueUrl: {
+              Type: 'String',
+              Value: 'https://sqs.us-east-1.amazonaws.com/123/reply-queue',
+            },
+          },
+        }),
+      );
+
+      expect(handler).toHaveBeenCalledWith({ amount: 100 }, {});
+
+      const sendCalls = (mockSend.mock.calls as any[]).filter(
+        ([cmd]) => cmd instanceof SendMessageCommand,
+      );
+      expect(sendCalls).toHaveLength(1);
+
+      expect(SendMessageCommand).toHaveBeenCalledWith({
+        QueueUrl: 'https://sqs.us-east-1.amazonaws.com/123/reply-queue',
+        MessageBody: JSON.stringify({ status: 'ok' }),
+        MessageAttributes: {
+          correlationId: {
+            DataType: 'String',
+            StringValue: 'test-corr-id',
+          },
+        },
+      });
+    });
+
+    it('2.1 does NOT send reply for fire-and-forget messages (no correlationId)', async () => {
+      const handler = jest.fn().mockResolvedValue({ status: 'ok' });
+      noTimerServer.addHandler('order.created', handler);
+
+      await noTimerServer.dispatchRecord(
+        makeRecord({
+          Type: 'Notification',
+          Subject: 'order.created',
+          Message: JSON.stringify({ id: '1' }),
+        }),
+      );
+
+      const sendCalls = (mockSend.mock.calls as any[]).filter(
+        ([cmd]) => cmd instanceof SendMessageCommand,
+      );
+      expect(sendCalls).toHaveLength(0);
+    });
+
+    it('2.2 does NOT send reply when only correlationId is present (no replyQueueUrl)', async () => {
+      const handler = jest.fn().mockResolvedValue({ status: 'ok' });
+      noTimerServer.addHandler('order.created', handler);
+
+      await noTimerServer.dispatchRecord(
+        makeRecord({
+          Type: 'Notification',
+          Subject: 'order.created',
+          Message: JSON.stringify({ id: '1' }),
+          MessageAttributes: {
+            correlationId: { Type: 'String', Value: 'test-corr-id' },
+          },
+        }),
+      );
+
+      const sendCalls = (mockSend.mock.calls as any[]).filter(
+        ([cmd]) => cmd instanceof SendMessageCommand,
+      );
+      expect(sendCalls).toHaveLength(0);
     });
   });
 

@@ -25,6 +25,8 @@ const imports: any[] = [
         region: process.env.AWS_REGION ?? 'us-east-1',
         topicArn: process.env.SNS_TOPIC_ARN ?? '',
         endpoint: process.env.AWS_ENDPOINT_URL,
+        replyQueueUrl: process.env.SQS_REPLY_QUEUE_URL,
+        replyTimeoutMs: 10_000,
     }),
 ];
 

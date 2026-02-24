@@ -5,8 +5,8 @@ frameworkVersion: "4"
 custom:
   stage: ${opt:stage, self:provider.stage}
   profile:
-    dev: default
-    prod: default
+    dev: todos
+    prod: todos
 
 package:
   patterns:
@@ -22,23 +22,30 @@ provider:
   profile: ${self:custom.profile.${self:custom.stage}}
   environment:
     NODE_ENV: development
-    AWS_REGION: ${self:provider.region}
-    SNS_TOPIC_ARN: ${env:SNS_TOPIC_ARN, ''}
-    SQS_QUEUE_URL: ${env:SQS_QUEUE_URL, ''}
-    SQS_QUEUE_ARN: ${env:SQS_QUEUE_ARN, ''}
+    SNS_TOPIC_ARN: !Ref ServiceDemoTopic
+    SQS_QUEUE_URL: !Ref ServiceDemoQueue
+    SQS_QUEUE_ARN: !GetAtt ServiceDemoQueue.Arn
+    SQS_REPLY_QUEUE_URL: !Ref ServiceDemoReplyQueue
   iam:
     role:
       statements:
         - Effect: Allow
           Action:
             - sns:Publish
-          Resource: ${env:SNS_TOPIC_ARN, '*'}
+          Resource: !Ref ServiceDemoTopic
         - Effect: Allow
           Action:
             - sqs:ReceiveMessage
             - sqs:DeleteMessage
             - sqs:GetQueueAttributes
-          Resource: ${env:SQS_QUEUE_ARN, '*'}
+          Resource: !GetAtt ServiceDemoQueue.Arn
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueAttributes
+          Resource: !GetAtt ServiceDemoReplyQueue.Arn
 
 functions:
   service-demo:
@@ -55,9 +62,53 @@ functions:
     handler: dist/apps/service-demo/main-sls-sqs.handler
     events:
       - sqs:
-          arn: ${env:SQS_QUEUE_ARN, ''}
+          arn: !GetAtt ServiceDemoQueue.Arn
           batchSize: 10
           functionResponseType: ReportBatchItemFailures
 
 plugins:
   - serverless-offline
+
+resources:
+  Resources:
+    ServiceDemoTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-${self:custom.stage}-events
+
+    ServiceDemoQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:custom.stage}-events
+
+    SnsToSqsSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: sqs
+        TopicArn: !Ref ServiceDemoTopic
+        Endpoint: !GetAtt ServiceDemoQueue.Arn
+        RawMessageDelivery: false
+
+    ServiceDemoReplyQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${self:custom.stage}-replies
+        MessageRetentionPeriod: 300
+        VisibilityTimeout: 30
+
+    SqsQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        Queues:
+          - !Ref ServiceDemoQueue
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: sns.amazonaws.com
+              Action: sqs:SendMessage
+              Resource: !GetAtt ServiceDemoQueue.Arn
+              Condition:
+                ArnEquals:
+                  aws:SourceArn: !Ref ServiceDemoTopic

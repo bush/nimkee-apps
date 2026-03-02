@@ -175,7 +175,54 @@ serverless invoke local --function service-demo-sqs \
 
 ---
 
-## 6. End-to-End — LocalStack (optional)
+## 6. End-to-End — AWS (live)
+
+The following curl commands test the deployed stack at the live API Gateway endpoint.
+
+### Publish (fire-and-forget)
+
+Triggers `POST /orders` → `ServiceBusService.publish('order.created')` → fans out to LocalServiceBusClient (EventEmitter2) + SnsServiceBusClient (SNS) → SQS Lambda receives and processes.
+
+```bash
+curl -X POST https://qj0wqm33xj.execute-api.us-east-1.amazonaws.com/dev/orders
+# Expected: order created - sick!
+```
+
+Check the SQS Lambda received it:
+```bash
+cd apis/serverless/service-demo
+npx serverless logs -f service-demo-sqs --stage dev
+# Expected log: SERVICE-B: Received order.created event: { id: 'my-order-id' }
+```
+
+### Send (request/reply)
+
+Triggers `POST /send` → `ServiceBusService.send({ cmd: 'process-payment' })` → routed via serviceMap to SnsServiceBusClient → SNS → SQS Lambda → `@MessagePattern` handler → reply sent to reply queue → HTTP Lambda polls and returns response.
+
+```bash
+curl -X POST https://qj0wqm33xj.execute-api.us-east-1.amazonaws.com/dev/send \
+  -H "Content-Type: application/json" \
+  -d '{"data": {"amount": 100}}'
+# Expected: {"status":"ok from service-demo"}
+```
+
+Check both Lambda logs:
+```bash
+cd apis/serverless/service-demo
+
+# HTTP Lambda (should show SNS publish with correlationId)
+npx serverless logs -f service-demo --stage dev
+
+# SQS Lambda (should show handler received message + reply sent)
+npx serverless logs -f service-demo-sqs --stage dev
+
+# Stream logs in real-time
+npx serverless logs -f service-demo-sqs --stage dev --tail
+```
+
+---
+
+## 7. End-to-End — LocalStack (optional)
 
 Requires LocalStack running locally with SQS and SNS services enabled.
 

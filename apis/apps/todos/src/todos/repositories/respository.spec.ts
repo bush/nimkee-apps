@@ -1,14 +1,20 @@
 import { join } from 'path';
 import * as shell from 'shelljs'
 
-import { Test } from "@nestjs/testing";
+import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigModule } from "@nestjs/config";
 import { ConsoleLogger, Logger, LogLevel } from "@nestjs/common";
+import { MikroORM } from "@mikro-orm/core";
+import { BetterSqliteDriver } from "@mikro-orm/better-sqlite";
 
 import { TodoPreview } from "../interfaces/todo";
 import { TodosRepository } from "../interfaces/todos-repository";
 import { TodosElectroDBRepoModule } from './electrodb/todos-repository.module';
-import { localDocClientProvider, prodDocClientProvider } from '@app/electrodb'
+import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { ElectrodbService } from '@app/electrodb';
+import { TodosMikroORMRepoModule } from './mikroorm/todos-repository.module';
+import { ConfigService } from '@nestjs/config';
 
 // SETTINGS
 // Logging on/off
@@ -17,56 +23,100 @@ const levels: LogLevel[]  = ['log', 'error', 'warn'];
 
 let repository: TodosRepository;
 
-function restartComposeStack(composeFile: string) {
-  return shell.exec(`docker compose -f ${composeFile} restart`,
-    { fatal: true, silent: true }).stdout;
+const electrodbFixture = {
+  mapper: "electrodb",
+  module: Test.createTestingModule({
+    imports: [
+      TodosElectroDBRepoModule.register({
+          provide: DynamoDBDocument,
+          useFactory: (config: ConfigService) => {
+              const client = new DynamoDBClient({
+                  endpoint: config.get<string>('ENDPOINT'),
+                  region: config.get<string>('DEFAULT_REGION'),
+                  credentials: {
+                      accessKeyId: config.get<string>('ACCESS_KEY_ID') || '',
+                      secretAccessKey: config.get<string>('SECRET_ACCESS_KEY') || ''
+                  }
+              });
+              return DynamoDBDocument.from(client);
+          }, inject: [ConfigService]
+      }),
+      ConfigModule.forRoot({
+        isGlobal: true,
+        envFilePath: [
+          join('apps/todos/', `.env.${process.env.NODE_ENV}`),
+          'apps/todos/.env.build.local'
+        ]
+      })
+    ]
+  }).setLogger(new ConsoleLogger('Repo Logger', { logLevels: levels })).compile(),
+  setup: async (testModule: TestingModule) => {
+    shell.exec('docker compose -f apps/todos/test/dynamodb/docker-compose.yml up -d',
+      { fatal: true, silent: true });
+
+    const config = testModule.get(ConfigService);
+    const service = new ElectrodbService(testModule.get(DynamoDBDocument));
+    await service.waitForTable(config.getOrThrow<string>('TODO_TABLE_TABLENAME'));
+  },
+  reset: async (testModule: TestingModule) => {
+    shell.exec('docker compose -f apps/todos/test/dynamodb/docker-compose.yml restart',
+      { fatal: true, silent: true });
+
+    const config = testModule.get(ConfigService);
+    const service = new ElectrodbService(testModule.get(DynamoDBDocument));
+    await service.waitForTable(config.getOrThrow<string>('TODO_TABLE_TABLENAME'));
+  },
+  teardown: async (testModule: TestingModule) => {
+    testModule.get(DynamoDBDocument).destroy();
+  },
 };
 
-const electrodbTestModule = Test.createTestingModule({
-  imports: [TodosElectroDBRepoModule.register(localDocClientProvider),
-  ConfigModule.forRoot({
-    isGlobal: true,
-    envFilePath: [
-      join('apps/todos/',
-        `.env.${process.env.NODE_ENV}`),
-      'apps/todos/.env.build.local'
-    ]
-  })]
-}).setLogger(new ConsoleLogger('Repo Logger', { logLevels: levels }))
-  .compile();
+/*
+const mikroOrmSqliteFixture = {
+  mapper: "mikroorm-sqlite",
+  module: Test.createTestingModule({
+    imports: [
+      TodosMikroORMRepoModule.register({
+        driver: BetterSqliteDriver,
+        dbName: ':memory:',
+        allowGlobalContext: true,
+      }),
+    ],
+  }).setLogger(new ConsoleLogger('Repo Logger', { logLevels: levels })).compile(),
+  reset: async (testModule: TestingModule) => {
+    const orm = testModule.get(MikroORM);
+    await orm.schema.refreshDatabase();
+  },
+  teardown: async (_testModule: TestingModule) => {},
+};*/
 
-const fixtures = [
-  {
-    mapper: "electrodb",
-    module: electrodbTestModule,
-    compose: 'apps/todos/test/dynamodb/docker-compose.yml'
-  }
-];
+// Switch the fixture you want to test:
+//const fixture = mikroOrmSqliteFixture;
+const fixture = electrodbFixture;
 
+describe(`RepositoryService (${fixture.mapper})`, () => {
+  let testModule: TestingModule;
 
-// Currently we only support electrodb for dynamodb but could support others in
-// the future. The idea is to test to the repository interface.
-describe.each(fixtures)("RepositoryService", (fixture) => {
   beforeAll(async () => {
     Logger.log(`NODE_ENV: ${process.env.NODE_ENV}`, "RepositoryService");
-    const testModule = await fixture.module;
+    testModule = await fixture.module;
     repository = testModule.get<TodosRepository>(TodosRepository);
+    await fixture.setup?.(testModule);
+  }, 60000);
+
+  afterAll(async () => {
+    if (!testModule) return;
+    await fixture.teardown?.(testModule);
+    await testModule.close();
   });
 
   beforeEach(async () => {
-    const testModule = await fixture.module;
-
     Logger.log(
       `NODE_ENV: ${process.env.NODE_ENV}, mapper: ${fixture.mapper}`,
       "RepositoryService"
     );
-    restartComposeStack(fixture.compose);
-  });
-
-
-  it("NOOP", async () => {
-    Logger.log("NOOP");
-  });
+    await fixture.reset(testModule);
+  }, 30000);
 
   it("should create a new todo", async () => {
     let todo = {
@@ -94,8 +144,6 @@ describe.each(fixtures)("RepositoryService", (fixture) => {
   });
 
   it("should get all todos", async () => {
-    const testModule = await fixture.module;
-
     // Create 20 test todos
     for (let index = 0; index < 20; index++) {
       await repository.create({

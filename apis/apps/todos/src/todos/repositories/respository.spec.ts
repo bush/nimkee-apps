@@ -71,7 +71,6 @@ const electrodbFixture = {
   },
 };
 
-/*
 const mikroOrmSqliteFixture = {
   mapper: "mikroorm-sqlite",
   module: Test.createTestingModule({
@@ -83,16 +82,17 @@ const mikroOrmSqliteFixture = {
       }),
     ],
   }).setLogger(new ConsoleLogger('Repo Logger', { logLevels: levels })).compile(),
+  setup: async (_testModule: TestingModule) => {},
   reset: async (testModule: TestingModule) => {
     const orm = testModule.get(MikroORM);
     await orm.schema.refreshDatabase();
   },
   teardown: async (_testModule: TestingModule) => {},
-};*/
+};
 
 // Switch the fixture you want to test:
-//const fixture = mikroOrmSqliteFixture;
-const fixture = electrodbFixture;
+const fixture = mikroOrmSqliteFixture;
+//const fixture = electrodbFixture;
 
 describe(`RepositoryService (${fixture.mapper})`, () => {
   let testModule: TestingModule;

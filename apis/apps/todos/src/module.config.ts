@@ -36,15 +36,15 @@ const dynamodbDocumentProvider = {
 //    useValue: DynamoDBDocument.from(new DynamoDBClient({}))
 // }
 
-export const todosRepositoryModule = TodosElectroDBRepoModule.register(dynamodbDocumentProvider);
+// export const todosRepositoryModule = TodosElectroDBRepoModule.register(dynamodbDocumentProvider);
 
 // MikroORM SQLite (local dev / testing):
-// import { TodosMikroORMRepoModule } from './todos/repositories/mikroorm/todos-repository.module';
-// import { SqliteDriver } from '@mikro-orm/better-sqlite';
-// export const todosRepositoryModule = TodosMikroORMRepoModule.register({
-//   driver: SqliteDriver,
-//   dbName: 'todos.db',
-// });
+import { TodosMikroORMRepoModule } from './todos/repositories/mikroorm/todos-repository.module';
+import { BetterSqliteDriver } from '@mikro-orm/better-sqlite';
+export const todosRepositoryModule = TodosMikroORMRepoModule.register({
+  driver: BetterSqliteDriver,
+  dbName: 'todos.db',
+});
 
 // OR
 

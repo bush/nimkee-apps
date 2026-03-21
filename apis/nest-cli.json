@@ -61,7 +61,8 @@
       "entryFile": "main",
       "sourceRoot": "apps/todos/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/todos/tsconfig.app.json"
+        "tsConfigPath": "apps/todos/tsconfig.app.json",
+        "webpackConfigPath": "apps/todos/webpack.config.js"
       }
     },
     "todos-sls": {

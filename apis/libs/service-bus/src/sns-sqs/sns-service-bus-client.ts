@@ -6,8 +6,8 @@ import {
   DeleteMessageCommand,
 } from '@aws-sdk/client-sqs';
 import { randomUUID } from 'crypto';
-import { SnsClientOptions } from '../interfaces/sns-sqs-options.interface';
-import { ServiceBusClient, MessagePattern } from '@app/service-bus';
+import { SnsClientOptions } from './sns-client-options';
+import { ServiceBusClient, MessagePattern } from '../service-bus.interface';
 
 /**
  * Implements the app-level ServiceBusClient interface using AWS SNS/SQS.

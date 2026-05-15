@@ -6,3 +6,6 @@ export * from './p2p/p2p-client.module';
 export * from './service-bus.interface';
 export * from './service-bus.module';
 export * from './service-bus.service';
+export * from './sns-sqs/sns-client-options';
+export * from './sns-sqs/sns-service-bus-client';
+export * from './sns-sqs/sns-service-bus-client.module';

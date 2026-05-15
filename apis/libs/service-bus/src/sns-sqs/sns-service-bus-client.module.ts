@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { SnsServiceBusClient } from './sns-service-bus-client';
-import { SnsClientOptions } from '../interfaces/sns-sqs-options.interface';
+import { SnsClientOptions } from './sns-client-options';
 
 /**
  * Wraps SnsServiceBusClient as a NestJS provider so it can be injected

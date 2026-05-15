@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { ClientProxy, ReadPacket, WritePacket } from '@nestjs/microservices';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
-import { SnsClientOptions } from '../interfaces/sns-sqs-options.interface';
+import { SnsClientOptions } from '@app/service-bus';
 
 /**
  * NestJS ClientProxy implementation that publishes events to AWS SNS.

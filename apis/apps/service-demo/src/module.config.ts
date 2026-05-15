@@ -4,7 +4,7 @@ import {
     LocalEventModule, LocalServiceBusClient,
     P2pServiceBusClient, P2pServiceBusClientModule,
 } from '@app/service-bus';
-import { SnsServiceBusClient, SnsServiceBusClientModule } from '@app/sns-sqs';
+import { SnsServiceBusClient, SnsServiceBusClientModule } from '@app/service-bus';
 import { Commands } from './commands';
 
 // Maps command names to transport names (defined in transports).
@@ -12,7 +12,7 @@ import { Commands } from './commands';
 // When a service is extracted from the monolith, add its commands here
 // to route them to the appropriate remote transport.
 const serviceMap = {
-    [Commands.PROCESS_PAYMENT]: TransportType.SNS_SQS,
+    //[Commands.PROCESS_PAYMENT]: TransportType.SNS_SQS,
 }
 
 export const remoteP2PPort: number = process.env.P2P_REMOTE_PORT !== undefined ?
@@ -30,7 +30,7 @@ const imports: any[] = [
 ];
 
 // Uncomment to enable P2P transport
-// imports.push(
+//imports.push(
 //     P2pServiceBusClientModule.register({
 //         name: 'P2P_SERVICE_BUS_CLIENT',
 //         transport: Transport.TCP,
@@ -39,9 +39,15 @@ const imports: any[] = [
 // );
 
 // Wire up the clients
+//export const serviceBusModule = ServiceBusModule.register({
+//    imports,
+//    local: LocalServiceBusClient,
+//    transports: { [TransportType.SNS_SQS]: SnsServiceBusClient },
+//    serviceMap,
+//})
+
 export const serviceBusModule = ServiceBusModule.register({
     imports,
     local: LocalServiceBusClient,
-    transports: { [TransportType.SNS_SQS]: SnsServiceBusClient },
     serviceMap,
 })

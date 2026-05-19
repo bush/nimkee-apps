@@ -1,0 +1,185 @@
+digraph "Diagram" {
+  splines = "ortho";
+  pad = 1;
+  nodesep = 0.6;
+  ranksep = 0.75;
+  fontname = "Sans-Serif";
+  fontsize = 15;
+  dpi = 200;
+  rankdir = "BT";
+  compound = true;
+  fontcolor = "#222222";
+  edge [
+    color = "#D5871488";
+    penwidth = 2;
+    arrowhead = "dot";
+    arrowtail = "dot";
+  ];
+  node [
+    shape = "box";
+    style = "rounded";
+    fixedsize = true;
+    width = 1.7;
+    height = 1.7;
+    labelloc = "c";
+    imagescale = true;
+    fontname = "Sans-Serif";
+    fontsize = 8;
+    margin = 8;
+  ];
+  subgraph "MonolithStack" {
+    subgraph "cluster-SubGraph.MonolithStack" {
+      graph [
+        label = "MonolithStack";
+        labelloc = "b";
+        labeljust = "l";
+        margin = 10;
+        fontsize = 16;
+        penwidth = 2;
+        pencolor = "#888888";
+        style = "filled,rounded";
+        fillcolor = "#e4e4e4";
+      ];
+      "MonolithStack/MonolithVpc" [
+        label = " MonolithVpc";
+        fontsize = 12;
+        image = "/Users/davidbush/.npm/_npx/b98735c91b702b55/node_modules/cdk-dia/icons/aws/Service/Arch_Networking-Content/64/Arch_Amazon-Virtual-Private-Cloud_64@5x.png";
+        imagescale = "true";
+        imagepos = "tc";
+        penwidth = 0;
+        shape = "node";
+        fixedsize = "true";
+        labelloc = "b";
+        width = 2;
+        height = 2.266;
+      ];
+      "MonolithStack/MonolithCluster" [
+        label = " MonolithCluster";
+        fontsize = 12;
+        image = "/Users/davidbush/.npm/_npx/b98735c91b702b55/node_modules/cdk-dia/icons/aws/Service/Arch_Compute/64/Arch_Amazon-Elastic-Container-Service_64@5x.png";
+        imagescale = "true";
+        imagepos = "tc";
+        penwidth = 0;
+        shape = "node";
+        fixedsize = "true";
+        labelloc = "b";
+        width = 2;
+        height = 2.266;
+      ];
+      "MonolithStack/PublicIngressSG" [
+        label = " PublicIngressSG";
+        fontsize = 12;
+        image = "/Users/davidbush/.npm/_npx/b98735c91b702b55/node_modules/cdk-dia/icons/aws/security_group.png";
+        imagescale = "true";
+        imagepos = "tc";
+        penwidth = 0;
+        shape = "node";
+        fixedsize = "true";
+        labelloc = "b";
+        width = 2;
+        height = 2.266;
+      ];
+      "MonolithStack/AppIngressSG" [
+        label = " AppIngressSG";
+        fontsize = 12;
+        image = "/Users/davidbush/.npm/_npx/b98735c91b702b55/node_modules/cdk-dia/icons/aws/security_group.png";
+        imagescale = "true";
+        imagepos = "tc";
+        penwidth = 0;
+        shape = "node";
+        fixedsize = "true";
+        labelloc = "b";
+        width = 2;
+        height = 2.266;
+      ];
+      subgraph "cluster-SubGraph.MonolithService" {
+        graph [
+          label = "MonolithService";
+          labelloc = "b";
+          labeljust = "l";
+          margin = 10;
+          fontsize = 16;
+          penwidth = 2;
+          pencolor = "#888888";
+          style = "filled,rounded";
+          fillcolor = "#d6d6d6";
+        ];
+        "MonolithStack/MonolithService/LB" [
+          label = " LB";
+          fontsize = 12;
+          image = "/Users/davidbush/.npm/_npx/b98735c91b702b55/node_modules/cdk-dia/icons/aws/Service/Arch_Networking-Content/64/Arch_Elastic-Load-Balancing_64@5x.png";
+          imagescale = "true";
+          imagepos = "tc";
+          penwidth = 0;
+          shape = "node";
+          fixedsize = "true";
+          labelloc = "b";
+          width = 2;
+          height = 2.266;
+        ];
+        "MonolithStack/MonolithService/TaskDef" [
+          label = " TaskDef";
+          fontsize = 12;
+          image = "/Users/davidbush/.npm/_npx/b98735c91b702b55/node_modules/cdk-dia/icons/aws/Resource/Res_Containers/Res_48_Dark/Res_Amazon-Elastic-Container-Service_Task_48_Dark_gen.png";
+          imagescale = "true";
+          imagepos = "tc";
+          penwidth = 0;
+          shape = "node";
+          fixedsize = "true";
+          labelloc = "b";
+          width = 2;
+          height = 2.266;
+        ];
+        "MonolithStack/MonolithService/Service/Service" [
+          label = " ECS Service Service";
+          fontsize = 12;
+          image = "/Users/davidbush/.npm/_npx/b98735c91b702b55/node_modules/cdk-dia/icons/aws/Resource/Res_Containers/Res_48_Dark/Res_Amazon-Elastic-Container-Service_Service_48_Dark_gen.png";
+          imagescale = "true";
+          imagepos = "tc";
+          penwidth = 0;
+          shape = "node";
+          fixedsize = "true";
+          labelloc = "b";
+          width = 2;
+          height = 2.266;
+        ];
+      }
+    }
+  }
+  "MonolithStack/PublicIngressSG" -> "MonolithStack/MonolithVpc" [
+    dir = "both";
+  ];
+  "MonolithStack/AppIngressSG" -> "MonolithStack/MonolithVpc" [
+    dir = "both";
+  ];
+  "MonolithStack/AppIngressSG" -> "MonolithStack/PublicIngressSG" [
+    dir = "both";
+  ];
+  "MonolithStack/AppIngressSG" -> "MonolithStack/MonolithService/LB" [
+    dir = "both";
+  ];
+  "MonolithStack/MonolithService/LB" -> "MonolithStack/MonolithVpc" [
+    dir = "both";
+  ];
+  "MonolithStack/MonolithService/LB" -> "MonolithStack/PublicIngressSG" [
+    dir = "both";
+  ];
+  "MonolithStack/MonolithService/LB" -> "MonolithStack/AppIngressSG" [
+    dir = "both";
+  ];
+  "MonolithStack/MonolithService/Service/Service" -> "MonolithStack/MonolithVpc" [
+    dir = "both";
+  ];
+  "MonolithStack/MonolithService/Service/Service" -> "MonolithStack/MonolithCluster" [
+    dir = "both";
+  ];
+  "MonolithStack/MonolithService/Service/Service" -> "MonolithStack/AppIngressSG" [
+    dir = "both";
+  ];
+  "MonolithStack/MonolithService/Service/Service" -> "MonolithStack/MonolithService/LB" [
+    dir = "both";
+  ];
+  "MonolithStack/MonolithService/Service/Service" -> "MonolithStack/MonolithService/TaskDef" [
+    dir = "both";
+  ];
+}

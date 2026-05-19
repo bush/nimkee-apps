@@ -1,0 +1,38 @@
+org: bush75
+service: nimkee-monolith
+frameworkVersion: "4"
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  profile:
+    dev: todos
+    prod: todos
+
+package:
+  patterns:
+    - '!apps/**'
+    - 'dist/apps/monolith/**'
+    - '!serverless.yml'
+
+provider:
+  name: aws
+  stage: dev
+  region: us-east-1
+  runtime: nodejs20.x
+  profile: ${self:custom.profile.${self:custom.stage}}
+  environment:
+    NODE_ENV: production
+
+functions:
+  monolith:
+    handler: dist/apps/monolith/main-sls.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
+
+plugins:
+  - serverless-offline

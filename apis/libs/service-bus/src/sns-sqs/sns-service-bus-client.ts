@@ -46,7 +46,7 @@ export class SnsServiceBusClient implements ServiceBusClient {
       new PublishCommand({
         TopicArn: this.topicArn,
         Subject: eventName,
-        Message: JSON.stringify(payload),
+        Message: JSON.stringify(payload ?? {}),
       }),
     );
   }
@@ -69,7 +69,7 @@ export class SnsServiceBusClient implements ServiceBusClient {
       new PublishCommand({
         TopicArn: this.topicArn,
         Subject: subject,
-        Message: JSON.stringify(payload),
+        Message: JSON.stringify(payload ?? {}),
         MessageAttributes: {
           correlationId: {
             DataType: 'String',

@@ -10,6 +10,15 @@
   "monorepo": true,
   "root": "apps/made-in-canada",
   "projects": {
+    "api-gateway": {
+      "type": "application",
+      "root": "apps/api-gateway",
+      "entryFile": "main",
+      "sourceRoot": "apps/api-gateway/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
+      }
+    },
     "electrodb": {
       "type": "library",
       "root": "libs/electrodb",
@@ -19,15 +28,6 @@
         "tsConfigPath": "libs/electrodb/tsconfig.lib.json"
       }
     },
-    "sns-sqs": {
-      "type": "library",
-      "root": "libs/sns-sqs",
-      "entryFile": "index",
-      "sourceRoot": "libs/sns-sqs/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/sns-sqs/tsconfig.lib.json"
-      }
-    },
     "made-in-canada": {
       "type": "application",
       "root": "apps/made-in-canada",
@@ -35,6 +35,74 @@
       "sourceRoot": "apps/made-in-canada/src",
       "compilerOptions": {
         "tsConfigPath": "apps/made-in-canada/tsconfig.app.json"
+      }
+    },
+    "monolith": {
+      "type": "application",
+      "root": "apps/monolith",
+      "entryFile": "main",
+      "sourceRoot": "apps/monolith/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/monolith/tsconfig.app.json"
+      }
+    },
+    "monolith-sls": {
+      "type": "application",
+      "root": "apps/monolith",
+      "entryFile": "main-sls",
+      "sourceRoot": "apps/monolith/src",
+      "compilerOptions": {
+        "deleteOutDir": false,
+        "tsConfigPath": "apps/monolith/tsconfig.app.json"
+      }
+    },
+    "orders": {
+      "type": "application",
+      "root": "apps/orders",
+      "entryFile": "main",
+      "sourceRoot": "apps/orders/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/orders/tsconfig.app.json"
+      }
+    },
+    "orders-proxy-sls": {
+      "type": "application",
+      "root": "apps/orders",
+      "entryFile": "main-proxy-sls",
+      "sourceRoot": "apps/orders/src",
+      "compilerOptions": {
+        "deleteOutDir": false,
+        "tsConfigPath": "apps/orders/tsconfig.app.json"
+      }
+    },
+    "orders-proxy-direct-sls": {
+      "type": "application",
+      "root": "apps/orders",
+      "entryFile": "main-proxy-direct-sls",
+      "sourceRoot": "apps/orders/src",
+      "compilerOptions": {
+        "deleteOutDir": false,
+        "tsConfigPath": "apps/orders/tsconfig.app.json"
+      }
+    },
+    "orders-sls-direct": {
+      "type": "application",
+      "root": "apps/orders",
+      "entryFile": "main-sls-direct",
+      "sourceRoot": "apps/orders/src",
+      "compilerOptions": {
+        "deleteOutDir": false,
+        "tsConfigPath": "apps/orders/tsconfig.app.json"
+      }
+    },
+    "orders-sls-sqs": {
+      "type": "application",
+      "root": "apps/orders",
+      "entryFile": "main-sls-sqs",
+      "sourceRoot": "apps/orders/src",
+      "compilerOptions": {
+        "deleteOutDir": false,
+        "tsConfigPath": "apps/orders/tsconfig.app.json"
       }
     },
     "quickeat": {
@@ -73,6 +141,35 @@
         "tsConfigPath": "apps/service-demo/tsconfig.app.json"
       }
     },
+    "service-demo-sls": {
+      "type": "application",
+      "root": "apps/service-demo",
+      "entryFile": "main-sls",
+      "sourceRoot": "apps/service-demo/src",
+      "compilerOptions": {
+        "deleteOutDir": false,
+        "tsConfigPath": "apps/service-demo/tsconfig.app.json"
+      }
+    },
+    "service-demo-sls-sqs": {
+      "type": "application",
+      "root": "apps/service-demo",
+      "entryFile": "main-sls-sqs",
+      "sourceRoot": "apps/service-demo/src",
+      "compilerOptions": {
+        "deleteOutDir": false,
+        "tsConfigPath": "apps/service-demo/tsconfig.app.json"
+      }
+    },
+    "sns-sqs": {
+      "type": "library",
+      "root": "libs/sns-sqs",
+      "entryFile": "index",
+      "sourceRoot": "libs/sns-sqs/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/sns-sqs/tsconfig.lib.json"
+      }
+    },
     "sns-sqs-transport": {
       "type": "library",
       "root": "libs/sns-sqs-transport",
@@ -98,26 +195,6 @@
       "sourceRoot": "apps/todos/src",
       "compilerOptions": {
         "tsConfigPath": "apps/todos/tsconfig.app.json"
-      }
-    },
-    "service-demo-sls": {
-      "type": "application",
-      "root": "apps/service-demo",
-      "entryFile": "main-sls",
-      "sourceRoot": "apps/service-demo/src",
-      "compilerOptions": {
-        "deleteOutDir": false,
-        "tsConfigPath": "apps/service-demo/tsconfig.app.json"
-      }
-    },
-    "service-demo-sls-sqs": {
-      "type": "application",
-      "root": "apps/service-demo",
-      "entryFile": "main-sls-sqs",
-      "sourceRoot": "apps/service-demo/src",
-      "compilerOptions": {
-        "deleteOutDir": false,
-        "tsConfigPath": "apps/service-demo/tsconfig.app.json"
       }
     }
   }

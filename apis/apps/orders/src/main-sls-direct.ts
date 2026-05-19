@@ -1,15 +1,18 @@
 import { NestFactory } from '@nestjs/core';
-import { OrdersDirectModule } from './orders-direct.module';
-import { OrdersDirectService } from './orders-direct.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { OrdersLambdaModule } from './orders-lambda.module';
 
-let service: OrdersDirectService;
+let eventEmitter: EventEmitter2;
 
-async function bootstrap(): Promise<OrdersDirectService> {
-  const app = await NestFactory.createApplicationContext(OrdersDirectModule);
-  return app.get(OrdersDirectService);
+async function bootstrap(): Promise<EventEmitter2> {
+  const app = await NestFactory.createApplicationContext(OrdersLambdaModule);
+  return app.get(EventEmitter2);
 }
 
 export const handler = async (event: { cmd: string; payload: any }) => {
-  service = service ?? (await bootstrap());
-  return service.dispatch(event.cmd, event.payload);
+  eventEmitter = eventEmitter ?? (await bootstrap());
+  // @OnMessage registers an @OnEvent listener keyed by JSON.stringify(pattern)
+  const eventKey = JSON.stringify({ cmd: event.cmd });
+  const results = await eventEmitter.emitAsync(eventKey, event.payload);
+  return results[0];
 };

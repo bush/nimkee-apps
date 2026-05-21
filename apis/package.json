@@ -26,6 +26,7 @@
     "monolith-sls:build": "nest build monolith-sls",
     "orders-sls:build": "nest build orders-proxy-sls && nest build orders-sls-sqs",
     "orders-direct-sls:build": "nest build orders-proxy-direct-sls && nest build orders-sls-direct",
+    "orders-individual-sls:build": "nest build orders-sls-create-order && nest build orders-sls-get-order && nest build orders-sls-list-orders",
     "service-demo-sls:build": "nest build service-demo-sls && nest build service-demo-sls-sqs",
     "test:service-demo": "jest --testPathPattern=\"libs/sns-sqs/src/server/sqs-server.spec|apps/service-demo/src/main-sls\""
   },

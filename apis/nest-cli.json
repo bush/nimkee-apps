@@ -95,6 +95,36 @@
         "tsConfigPath": "apps/orders/tsconfig.app.json"
       }
     },
+    "orders-sls-create-order": {
+      "type": "application",
+      "root": "apps/orders",
+      "entryFile": "main-sls-create-order",
+      "sourceRoot": "apps/orders/src",
+      "compilerOptions": {
+        "deleteOutDir": false,
+        "tsConfigPath": "apps/orders/tsconfig.app.json"
+      }
+    },
+    "orders-sls-get-order": {
+      "type": "application",
+      "root": "apps/orders",
+      "entryFile": "main-sls-get-order",
+      "sourceRoot": "apps/orders/src",
+      "compilerOptions": {
+        "deleteOutDir": false,
+        "tsConfigPath": "apps/orders/tsconfig.app.json"
+      }
+    },
+    "orders-sls-list-orders": {
+      "type": "application",
+      "root": "apps/orders",
+      "entryFile": "main-sls-list-orders",
+      "sourceRoot": "apps/orders/src",
+      "compilerOptions": {
+        "deleteOutDir": false,
+        "tsConfigPath": "apps/orders/tsconfig.app.json"
+      }
+    },
     "orders-sls-sqs": {
       "type": "application",
       "root": "apps/orders",

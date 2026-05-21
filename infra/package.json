@@ -8,6 +8,7 @@
     "deploy:orders": "cdk deploy OrdersStack",
     "deploy:orders-direct": "cdk deploy OrdersDirectStack",
     "deploy:orders-api-direct": "cdk deploy OrdersApiDirectStack",
+    "deploy:orders-individual": "cdk deploy OrdersIndividualStack",
     "deploy:monolith": "cdk deploy MonolithStack",
     "diff": "cdk diff",
     "synth": "cdk synth",

@@ -5,9 +5,9 @@ import { Commands } from './commands';
 @Controller()
 export class OrdersController {
   @OnMessage({ cmd: Commands.CREATE_ORDER })
-  async createOrder(payload: any) {
+  async createOrder(payload: { itemId: string }) {
     Logger.log(`OrdersController.createOrder: ${JSON.stringify(payload)}`, 'Orders');
-    return { status: 'created', order: payload };
+    return { status: 'created', order: { itemId: payload.itemId } };
   }
 
   @OnMessage({ cmd: Commands.GET_ORDER })

@@ -1,0 +1,31 @@
+{
+  "name": "nutrition-app",
+  "version": "1.0.0",
+  "description": "CLI nutrition and calorie tracker built with NestJS",
+  "main": "dist/cli.js",
+  "bin": {
+    "nutri": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc && node -e \"const fs=require('fs');const f='dist/cli.js';const c=fs.readFileSync(f,'utf8');if(!c.startsWith('#!/'))fs.writeFileSync(f,'#!/usr/bin/env node\\n'+c);fs.chmodSync(f,'755')\"",
+    "start": "ts-node -r tsconfig-paths/register src/cli.ts",
+    "dev": "ts-node src/cli.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@nestjs/common": "^11.1.27",
+    "@nestjs/core": "^11.1.27",
+    "chalk": "^4.1.2",
+    "commander": "^15.0.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.23",
+    "@types/node": "^26.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}

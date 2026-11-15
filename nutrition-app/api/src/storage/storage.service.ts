@@ -6,7 +6,7 @@ import { Database, Food, DayLog } from '../types';
 
 const DB_PATH = path.join(os.homedir(), '.nutrition-app', 'db.json');
 
-const DEFAULT_FOODS: Record<string, Food> = {
+const DEFAULTS: Record<string, Food> = {
   'chicken breast': { name: 'Chicken Breast', calories: 165, protein: 31, carbs: 0, fat: 3.6, serving: '100g' },
   'brown rice': { name: 'Brown Rice', calories: 216, protein: 5, carbs: 45, fat: 1.8, serving: '1 cup cooked' },
   'egg': { name: 'Egg', calories: 78, protein: 6, carbs: 0.6, fat: 5, serving: '1 large' },
@@ -27,58 +27,28 @@ const DEFAULT_FOODS: Record<string, Food> = {
 @Injectable()
 export class StorageService {
   private db: Database;
-
-  constructor() {
-    this.db = this.load();
-  }
+  constructor() { this.db = this.load(); }
 
   private load(): Database {
     try {
       fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-      if (fs.existsSync(DB_PATH)) {
-        return JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
-      }
+      if (fs.existsSync(DB_PATH)) return JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
     } catch {}
-    return { foods: { ...DEFAULT_FOODS }, logs: {} };
+    return { foods: { ...DEFAULTS }, logs: {} };
   }
 
-  private save(): void {
-    fs.writeFileSync(DB_PATH, JSON.stringify(this.db, null, 2));
-  }
+  private save() { fs.writeFileSync(DB_PATH, JSON.stringify(this.db, null, 2)); }
 
-  getFoods(): Record<string, Food> {
-    return this.db.foods;
-  }
-
-  getFood(name: string): Food | undefined {
-    return this.db.foods[name.toLowerCase()];
-  }
-
-  addFood(key: string, food: Food): void {
-    this.db.foods[key.toLowerCase()] = food;
-    this.save();
-  }
-
+  getFoods() { return this.db.foods; }
+  getFood(key: string) { return this.db.foods[key.toLowerCase()]; }
+  addFood(key: string, food: Food) { this.db.foods[key.toLowerCase()] = food; this.save(); }
   removeFood(key: string): boolean {
     if (!this.db.foods[key.toLowerCase()]) return false;
-    delete this.db.foods[key.toLowerCase()];
-    this.save();
-    return true;
+    delete this.db.foods[key.toLowerCase()]; this.save(); return true;
   }
-
   getDayLog(date: string): DayLog {
-    if (!this.db.logs[date]) {
-      this.db.logs[date] = { date, entries: [] };
-    }
+    if (!this.db.logs[date]) this.db.logs[date] = { date, entries: [] };
     return this.db.logs[date];
   }
-
-  saveDayLog(log: DayLog): void {
-    this.db.logs[log.date] = log;
-    this.save();
-  }
-
-  getLogs(): Record<string, DayLog> {
-    return this.db.logs;
-  }
+  saveDayLog(log: DayLog) { this.db.logs[log.date] = log; this.save(); }
 }
